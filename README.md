@@ -1,12 +1,14 @@
-# Wearable Biomedical Signals for Free-Throw Outcome Prediction
+﻿# Wearable Biomedical Signals for Event-Labelled Motor-Skill Assessment
 
 Field-deployable smartwatch–smartphone–cloud framework (VILNIUS TECH, Department of Electronic Systems).
 
 **Anastasija Grubinskienė** (corresponding), **Andrius Katkevičius**
 
-Manuscript for MDPI *Sensors* (draft). DOI: to be assigned on publication.
+Manuscript for MDPI *Sensors* (draft). Basketball free-throw shooting is the primary use case; the same labelled-event schema extends to other discrete motor skills.
 
 Cite this repository: [https://github.com/annastasija-dev/wearable-freethrow-biosignals](https://github.com/annastasija-dev/wearable-freethrow-biosignals)
+
+Overleaf: [project](https://www.overleaf.com/project/6a50d0b6825a6295ba220c83)
 
 ## Contents
 

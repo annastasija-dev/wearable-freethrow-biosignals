@@ -1,4 +1,4 @@
-%  BUILD_ID: 20260715-figure1-v13-wide
+%  BUILD_ID: 20260721-concrete-methods-v18
 
 %  LaTeX support: latex@mdpi.com
 
@@ -48,7 +48,7 @@
 
 
 
-\Title{Wearable Biomedical Signals for Free-Throw Outcome Prediction: A Field-Deployable Smartwatch--Smartphone Framework}
+\Title{Wearable Biomedical Signals for Event-Labelled Motor-Skill Assessment: A Field-Deployable Smartwatch--Smartphone Framework}
 
 
 
@@ -76,11 +76,11 @@ $^{1}$ \quad Department of Electronic Systems, Vilnius Gediminas Technical Unive
 
 
 
-\abstract{In sports training, intelligent electronic systems enable quantitative assessment of athletic movements through wearable sensor acquisition and biomedical signal processing. Wrist-worn smartwatches paired with smartphones provide continuous access to accelerometer, cardiovascular, and optical time series during field activity. This study concerns basketball free-throw shooting as a closed motor skill in which outcome-related information may be carried by multimodal biosignals recorded on the shooting wrist. A field-deployable smartwatch--smartphone framework synchronises four continuous vendor SDK streams---accelerometer, heart rate (with inter-beat intervals), photoplethysmography, and skin temperature---with operator-verified hit/miss labels entered in real time through a dedicated Android protocol application. Samples are timestamped and stored per stream in a cloud \texttt{raw/} repository; protocol metadata are archived separately under \texttt{protocol/} with shared session identifiers for temporal co-registration. The end-to-end electronic acquisition chain---from on-wrist sensing through mobile relay to structured cloud ingestion---supports subsequent unimodal biomedical signal processing or multimodal signal fusion. \phh}
+\abstract{In sports training, intelligent electronic systems enable quantitative assessment of athletic movements through wearable sensor acquisition and biomedical signal processing. Wrist-worn smartwatches paired with smartphones provide continuous access to accelerometer, cardiovascular, and optical time series during field activity. This work presents a field-deployable smartwatch--smartphone--cloud framework for synchronised collection of multimodal wrist biosignals and operator-verified event labels. Basketball free-throw shooting is the primary closed-skill use case: four continuous vendor SDK streams---accelerometer, heart rate (with inter-beat intervals), photoplethysmography, and skin temperature---are aligned with hit/miss labels entered in real time through an Android protocol application. Labelled windows are analysed for hit/miss prediction and for secondary wrist-level descriptors of release kinematics, pre-shot steadiness, and short-term autonomic state. Samples are stored per stream under cloud \texttt{raw/}; protocol metadata are archived under \texttt{protocol/} with shared session identifiers for temporal co-registration. Data analysis uses signal-processing features, classical machine learning (logistic regression, random forest, SVM), and neural networks (1D CNN, LSTM/GRU, multimodal fusion) under participant-wise evaluation. The same acquisition and labelling schema applies to other discrete athletic events beyond basketball. \phh}
 
 
 
-\keyword{electronic systems; biomedical signal processing; wearable sensors; smartwatch; accelerometer; heart rate; photoplethysmography; mobile health platform; basketball; free-throw shooting; sensor fusion}
+\keyword{electronic systems; biomedical signal processing; wearable sensors; smartwatch; accelerometer; heart rate; photoplethysmography; mobile health platform; motor-skill assessment; basketball; free-throw shooting; sensor fusion; neural networks}
 
 
 
@@ -98,15 +98,15 @@ Intelligent electronic systems are increasingly used in sports to acquire, trans
 
 
 
-Free-throw shooting is a closed motor skill in which timing, limb kinematics, and autonomic regulation may vary across attempts~\cite{Guo2023,Sonalcan2025}. Prior basketball studies have also employed video-based pose estimation~\cite{DENG2025,Zhao2022} or professional body-sensor networks; these lines of work are methodologically distinct from the present wearable SDK framework and are cited here only to situate the acquisition problem. Wearable inertial studies show that wrist kinematic descriptors can discriminate skill level or relate to shot outcome~\cite{Guo2023}, but they often depend on specialised sensor placements, offline annotation, or laboratory-centred setups.
+Discrete closed motor skills---of which basketball free-throw shooting is a convenient field example---combine short kinematic bursts with measurable autonomic modulation across attempts~\cite{Guo2023,Sonalcan2025}. Prior basketball studies have also employed video-based pose estimation~\cite{DENG2025,Zhao2022} or professional body-sensor networks; those modalities can capture whole-body posture that a single wrist device cannot. The present framework is therefore positioned as a practical \emph{wrist-level} acquisition layer rather than a full biomechanical laboratory substitute. Wearable inertial studies show that wrist kinematic descriptors can discriminate skill level or relate to shot outcome~\cite{Guo2023}, but they often depend on specialised sensor placements, offline annotation, or laboratory-centred setups.
 
 
 
-Consumer smartwatches expose multiple biomedical streams through a unified software development kit (SDK), enabling repeated wrist-level acquisition outside controlled laboratories~\cite{Holgado2026,Fyntikakis2026}. A complementary requirement for supervised analysis is an outcome channel with verified hit/miss labels time-aligned to the recorded biosignals. The present work addresses that acquisition problem in a sports-hall setting.
+Consumer smartwatches expose multiple biomedical streams through a unified software development kit (SDK), enabling repeated wrist-level acquisition outside controlled laboratories~\cite{Holgado2026,Fyntikakis2026}. A complementary requirement for supervised analysis is an event channel with verified labels time-aligned to the recorded biosignals. In the basketball protocol, labels are hit/miss; the protocol application stores discrete event codes that map one-to-one onto co-registered biosignal windows.
 
 
 
-This paper describes an end-to-end smartwatch--smartphone electronic system for synchronised collection of multimodal wearable biosignals and real-time free-throw outcome labels. Two native Android applications implement the chain: a \textbf{watch acquisition application} on a wrist-worn Wear~OS device and a \textbf{protocol application} on a paired Android smartphone. The architecture separates \texttt{protocol/} outcome logs from \texttt{raw/} biosignal batches while preserving shared pseudonymous identifiers and millisecond-resolution timestamps (Figure~\ref{fig:architecture}). The session protocol defines ten consecutive labeled attempts per participant under operator supervision.
+This paper describes an end-to-end smartwatch--smartphone electronic system for synchronised collection of multimodal wearable biosignals and real-time operator event labels. Two native Android applications implement the chain: a \textbf{watch acquisition application} on a wrist-worn Wear~OS device and a \textbf{protocol application} on a paired Android smartphone. The architecture separates \texttt{protocol/} event logs from \texttt{raw/} biosignal batches while preserving shared identifiers and millisecond-resolution timestamps (Figure~\ref{fig:architecture}). The session protocol defines ten consecutive labelled free-throw attempts per participant. Section~\ref{sec:analysis} specifies the data analysis methods: hit/miss classification and wrist-derived motor and physiological descriptors.
 
 
 
@@ -166,11 +166,11 @@ This section describes the deployed smartwatch--smartphone--cloud acquisition sy
 
 \centering
 
-\includegraphics[width=\fulllength,keepaspectratio]{figures/figure1-architecture.png}
+\includegraphics[width=\fulllength,keepaspectratio]{{figures/1 figure}.png}
 
 \end{adjustwidth}
 
-\caption{End-to-end data acquisition and evaluation architecture. \textbf{Data acquisition pipeline:} the protocol application records real-time hit/miss labels with synchronised timestamps; the smartwatch streams inertial and biomedical signals via Bluetooth/SDK to the protocol application on the smartphone. \textbf{Cloud infrastructure:} session metadata are stored in protocol storage; per-stream raw biosignals are uploaded as JSONL batches to raw biosignal storage. \textbf{Evaluation:} temporal co-registration aligns labels and biosignals, followed by machine learning evaluation (planned).\label{fig:architecture}}
+\caption{End-to-end data acquisition and evaluation architecture. \textbf{Data acquisition pipeline:} the protocol application records real-time hit/miss labels with synchronised timestamps; the smartwatch streams inertial and biomedical signals via Bluetooth/SDK to the protocol application on the smartphone. \textbf{Cloud infrastructure:} session metadata are stored in protocol storage; per-stream raw biosignals are uploaded as JSONL batches to raw biosignal storage. \textbf{Evaluation:} temporal co-registration of labels and biosignals, then signal processing, classical machine learning, and neural-network analysis.\label{fig:architecture}}
 
 \end{figure}
 
@@ -372,11 +372,71 @@ P001 & P001\_20260713\_0138 & 10 & YYYY-MM-DDTHH:MM:SS.sss & hit/miss & sports h
 
 
 
+\subsection{Measurable Quantities within the Present Framework}
+
+\label{sec:measurable}
+
+
+
+A single wrist-worn consumer device cannot reconstruct full-body pose, ball grip, or exact hand placement on the rim plane. Within the streams actually deployed (accelerometer, heart rate/IBI, PPG, skin temperature) and the operator protocol app, the study therefore targets quantities that are \emph{identifiable from wrist-level sensing plus event labels}:
+
+
+
+\begin{itemize}
+
+\item \textbf{Primary supervised target:} free-throw outcome (hit/miss) for each labelled attempt.
+
+\item \textbf{Wrist kinematic proxies (accelerometer window):} release-related motion magnitude and timing relative to the label timestamp; pre-shot steadiness / residual tremor; shot-to-shot motion consistency (repeatability) within a ten-shot session.
+
+\item \textbf{Autonomic / cardiovascular proxies (HR, IBI, PPG):} peri-shot heart-rate level and short-term IBI variability; PPG amplitude dynamics as an optical cardiovascular adjunct---interpreted as physiological state around the attempt, not as a clinical diagnosis.
+
+\item \textbf{Thermal context (skin temperature):} session-level object and ambient temperature trends as slow context for prolonged practice blocks.
+
+\end{itemize}
+
+
+
+Protocol extensions without hardware changes include additional operator codes in \texttt{shots.jsonl} (e.g., miss-type categories). Whole-body posture and ball-hand geometry require a complementary modality (e.g., video) and are outside the present wrist-only sensing scope.
+
+
+
 \subsection{Signal Processing and Analysis Pipeline}
 
+\label{sec:analysis}
 
 
-After field collection is complete, fixed-duration windows anchored to each labelled shot timestamp will be extracted from all active SDK streams. The following subsections describe the planned analysis workflow.
+
+After field collection, fixed-duration windows anchored to each labelled event timestamp are extracted from all active SDK streams. Data analysis applies three complementary method families (Table~\ref{tab:analysisplan}): signal processing / statistical descriptors, classical machine learning, and neural networks. Basketball free-throw sessions are the evaluation domain for these methods.
+
+
+
+\begin{table}[H]
+
+\caption{Data analysis methods for co-registered wrist biosignal windows and event labels.\label{tab:analysisplan}}
+
+\small
+
+\begin{tabular}{@{}p{2.4cm}p{5.2cm}p{5.2cm}@{}}
+
+\toprule
+
+\textbf{Method family} & \textbf{Purpose} & \textbf{Methods} \\
+
+\midrule
+
+Signal processing & Feature extraction and statistical association with labels & Accel time/frequency features; HR/IBI summaries; PPG window energy; effect-size / correlation tests \\
+
+Classical ML & Hit/miss classification on handcrafted features & Logistic regression; random forest; SVM; participant-wise cross-validation \\
+
+Neural networks & Classification on raw or lightly filtered windows & 1D CNN; LSTM/GRU; multimodal fusion networks \\
+
+Evaluation & Comparable scoring across method families & Participant-wise train/test splits; ROC-AUC; F1; stream ablation (accel, cardio, fusion) \\
+
+\bottomrule
+
+\end{tabular}
+
+\end{table}
 
 
 
@@ -384,7 +444,7 @@ After field collection is complete, fixed-duration windows anchored to each labe
 
 
 
-\phh
+Each hit/miss timestamp in \texttt{shots.jsonl} is the analysis anchor. Pre- and post-release windows are cut from accelerometer, HR/IBI, PPG, and skin-temperature streams using the shared \texttt{session\_id} and millisecond clocks. Window length is fixed before model fitting (default $\pm$1.5\,s about the label, with $\pm$1.0\,s and $\pm$2.0\,s reported as robustness checks).
 
 
 
@@ -392,15 +452,15 @@ After field collection is complete, fixed-duration windows anchored to each labe
 
 
 
-\phh
+Handcrafted features comprise kinematic summaries (magnitude, jerk proxies, spectral bands), cardiovascular summaries (mean HR, IBI dispersion), and PPG window energy. These features input classical ML models and provide an interpretable reference against neural models trained on raw or band-pass-filtered windows.
 
 
 
-\subsubsection{Unimodal and Multimodal Classification}
+\subsubsection{Classification and Descriptor Analysis}
 
 
 
-\phh
+Unimodal and multimodal models estimate (i)~hit/miss classification performance and (ii)~associations between wrist descriptors and outcome or within-session motion consistency. Classical ML and neural-network results are reported under the same participant-wise evaluation protocol (Table~\ref{tab:analysisplan}). \phh
 
 
 
@@ -466,7 +526,7 @@ After field collection is complete, fixed-duration windows anchored to each labe
 
 
 
-\subsection{Multimodal Signal Fusion and Outcome Prediction}
+\subsection{Multimodal Analysis: Prediction and Wrist Descriptors}
 
 
 
@@ -512,11 +572,11 @@ After field collection is complete, fixed-duration windows anchored to each labe
 
 
 
-\subsection{Future Work}
+\subsection{Cross-Sport Extension}
 
 
 
-\phh
+The acquisition pattern is \emph{continuous wrist biosignals + discrete operator-verified athletic events + cloud co-registration}. The same applications and cloud schema apply to other closed skills with success/fail or phase markers logged on the phone---volleyball serves or spikes, tennis serves, archery or shooting releases, and short sprint or jump starts. Cyclic sports (e.g., running) use the same storage and streaming stack with lap or segment markers instead of single-shot outcomes. Cross-sport reuse changes only the event vocabulary and window definitions; the watch, phone, and \texttt{raw/}/\texttt{protocol/} layout remain unchanged. \phh
 
 
 
@@ -526,7 +586,7 @@ After field collection is complete, fixed-duration windows anchored to each labe
 
 
 
-This paper presents a field-deployable smartwatch--smartphone electronic system for synchronised acquisition of multimodal wearable biomedical signals and real-time free-throw outcome labels in a sports-hall setting. A watch application on a Wear~OS device streams four continuous vendor SDK channels (accelerometer, heart rate, PPG, skin temperature); a protocol application on a paired Android smartphone records hit/miss labels for ten attempts per session. Cloud storage separates per-stream \texttt{raw/} JSONL biosignal batches from \texttt{protocol/} outcome logs while preserving shared identifiers and timestamps for temporal co-registration. \phh
+This paper presents a field-deployable smartwatch--smartphone electronic system for synchronised acquisition of multimodal wearable biomedical signals and real-time operator event labels in a sports-hall setting. Basketball free-throw shooting is the primary use case: a watch application streams four continuous vendor SDK channels (accelerometer, heart rate, PPG, skin temperature); a protocol application records hit/miss labels for ten attempts per session. Cloud storage separates per-stream \texttt{raw/} JSONL biosignal batches from \texttt{protocol/} event logs while preserving shared identifiers and timestamps for temporal co-registration. Co-registered windows are analysed with signal-processing features, classical machine learning, and neural networks for hit/miss classification and wrist kinematic / physiological descriptors. The same labelling architecture applies to other discrete athletic events beyond basketball. \phh
 
 
 
@@ -581,6 +641,8 @@ IBI & inter-beat interval\\
 JSONL & JavaScript Object Notation Lines\\
 
 ML & machine learning\\
+
+NN & neural network\\
 
 PPG & photoplethysmography\\
 
