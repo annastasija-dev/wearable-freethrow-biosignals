@@ -177,14 +177,15 @@ if static_dir.exists():
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 
-@app.get("/app")
-def phone_app() -> FileResponse:
-    return FileResponse(static_dir / "app" / "index.html")
-
-
+@app.get("/")
 @app.get("/install")
 def install_page() -> FileResponse:
     return FileResponse(static_dir / "install" / "index.html")
+
+
+@app.get("/app")
+def phone_app() -> FileResponse:
+    return FileResponse(static_dir / "app" / "index.html")
 
 
 @app.get("/install/watch")
