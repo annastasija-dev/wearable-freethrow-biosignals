@@ -3,7 +3,7 @@ VILNIUS TECH · Department of Electronic Systems
 
 Install
 1. Install FT-Protocol.apk on the phone.
-2. FT Watch is installed through the phone app FT Protocol: FT Protocol → ⋮ → Install on watch (once). The phone and the watch must be on the same Wi-Fi network.
+2. FT Watch is installed from the phone app: FT Protocol → ⋮ → Install on watch. The phone and the watch must be on the same Wi-Fi network.
 3. Open FT Watch on the watch and leave it open.
 
 Sensors (once on the watch)

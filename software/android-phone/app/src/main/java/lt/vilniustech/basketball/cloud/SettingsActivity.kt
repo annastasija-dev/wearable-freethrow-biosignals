@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import lt.vilniustech.basketball.cloud.databinding.ActivitySettingsBinding
+
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
@@ -16,15 +17,15 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        title = getString(R.string.settings_title)
+        setSupportActionBar(binding.settingsToolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
 
         binding.baseUrlInput.setText(AppConfig.cloudBaseUrl(this))
         binding.apiKeyInput.setText(AppConfig.apiKey(this))
 
         binding.discoverUrlsButton.setOnClickListener { discoverCloudUrls() }
         binding.testCloudButton.setOnClickListener { testCloudConnection() }
+        binding.closeButton.setOnClickListener { finish() }
 
         lifecycleScope.launch {
             val bootstrap = withContext(Dispatchers.IO) {
