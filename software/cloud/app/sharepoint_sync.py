@@ -261,6 +261,7 @@ def sync_instruction_pack() -> dict:
     mapping = [
         (docs / "Instructions_EN.txt", f"{root}/Instructions_EN.txt"),
         (docs / "Instrukcija_LT.txt", f"{root}/Instrukcija_LT.txt"),
+        (docs / "Overleaf_GitHub.txt", f"{root}/Overleaf_GitHub.txt"),
         (docs / "results_README.txt", f"{root}/results/README_LT.txt"),
         (docs / "results_README_EN.txt", f"{root}/results/README_EN.txt"),
     ]
@@ -274,7 +275,7 @@ def sync_instruction_pack() -> dict:
         _upload_file(token, remote_path, local_path)
         uploaded.append(remote_path)
     deleted: list[str] = []
-    for extra in ("README.txt", "README_LT.txt", "README_EN.txt"):
+    for extra in ("README.txt", "README_LT.txt", "README_EN.txt", "Straipsnis.txt"):
         remote = f"{root}/{extra}"
         if _delete_file(token, remote):
             deleted.append(remote)

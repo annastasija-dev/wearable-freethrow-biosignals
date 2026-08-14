@@ -1,0 +1,14 @@
+Overleaf / GitHub
+VILNIUS TECH · Elektroninių sistemų katedra
+
+Overleaf (skaityti / read):
+https://www.overleaf.com/read/kfvybsmxpgff#853cf3
+
+GitHub (straipsnis + programos / manuscript + software):
+https://github.com/annastasija-dev/wearable-freethrow-biosignals
+
+Pavadinimas / Title
+Wearable Biomedical Signals for Event-Labelled Motor-Skill Assessment:
+A Field-Deployable Smartwatch–Smartphone Framework
+
+Klausimai: Anastasija Grubinskienė, anastasija.grubinskiene@vilniustech.lt
