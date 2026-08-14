@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FT Protocol</string>
+    <string name="app_subtitle">Free-throw labeling</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_saved">Settings saved</string>
+    <string name="error_base_url">Enter cloud URL</string>
+    <string name="error_participant">Enter participant code, e.g. P001</string>
+    <string name="error_weight">Enter weight (kg)</string>
+    <string name="error_height">Enter height (cm)</string>
+    <string name="error_age">Enter age (years)</string>
+    <string name="error_sex">Select sex</string>
+    <string name="error_throw_technique">Select throwing technique</string>
+    <string name="start_first">Start a session first</string>
+    <string name="all_shots_done">All 10 shots are labeled</string>
+    <string name="session_started">Recording: %1$s</string>
+    <string name="start_failed">Start failed: %1$s</string>
+    <string name="label_failed">Label failed: %1$s</string>
+    <string name="finish_failed">Finish failed: %1$s</string>
+    <string name="session_uploaded">Session saved</string>
+    <string name="session_uploaded_no_watch">Session saved, but the watch sent no data.\nOpen FT Watch on the watch and start again.</string>
+    <string name="session_upload_pending">Uploading %1$d samples…</string>
+    <string name="upload_error">Upload error: %1$s</string>
+    <string name="watch_not_connected">Watch not connected. Open FT Watch.</string>
+    <string name="watch_start_failed">Could not start the watch. Open FT Watch.</string>
+    <string name="watch_connected">Watch connected</string>
+    <string name="watch_wifi_ready">Watch not connected</string>
+    <string name="watch_wifi_active">Watch connected</string>
+    <string name="watch_missing">Open FT Watch on the watch</string>
+    <string name="watch_recording_ack">Watch recording</string>
+    <string name="watch_waiting_ack">Waiting for the watch…</string>
+    <string name="watch_app_missing">FT Watch is not open. Open it before the session.</string>
+    <string name="watch_app_missing_toast">FT Watch is not open. Open it on the watch.</string>
+    <string name="watch_app_closed">FT Watch is not open. Open it before the session.</string>
+    <string name="watch_app_closed_toast">FT Watch is not open. Open it on the watch.</string>
+    <string name="shots_complete">10/10 done. Tap Finish session.</string>
+    <string name="cloud_ok">Connection OK</string>
+    <string name="cloud_fail">Connection error: %1$s</string>
+    <string name="cloud_url_label">Cloud: %1$s</string>
+    <string name="recording_status">%1$s</string>
+    <string name="no_session">No active session</string>
+    <string name="status_idle">Ready</string>
+    <string name="status_recording">Recording</string>
+    <string name="active_participant">Participant: %1$s</string>
+    <string name="last_participant">Last participant: %1$s</string>
+    <string name="shots_counter">Shots %1$d / %2$d</string>
+    <string name="imu_counter">Watch samples: %1$d</string>
+    <string name="stream_counter_empty">No watch samples yet</string>
+    <string name="stream_counter_item">%1$s %2$d</string>
+    <string name="streams_waiting">Waiting for the watch…</string>
+    <string name="streams_active">Streams: %1$s</string>
+    <string name="participant_hint">Participant code (e.g. P001)</string>
+    <string name="section_participant">Participant details</string>
+    <string name="weight_hint">Weight (kg)</string>
+    <string name="height_hint">Height (cm)</string>
+    <string name="age_hint">Age (years)</string>
+    <string name="sex_hint">Sex</string>
+    <string name="throw_technique_hint">Throwing technique</string>
+    <string-array name="sex_options">
+        <item>Female</item>
+        <item>Male</item>
+        <item>Other / prefer not to say</item>
+    </string-array>
+    <string-array name="throw_technique_options">
+        <item>One hand</item>
+        <item>Two hands</item>
+        <item>Wrist-dominant</item>
+        <item>Set shot (overhead)</item>
+        <item>Push shot</item>
+        <item>Underhand</item>
+        <item>Other</item>
+    </string-array>
+    <string name="base_url_hint">Cloud server URL</string>
+    <string name="cloud_auto_connected">Connected</string>
+    <string name="api_key_hint">API key</string>
+    <string name="start_session">Start session (10 shots)</string>
+    <string name="hit">Hit</string>
+    <string name="miss">Miss</string>
+    <string name="finish_session">Finish session</string>
+    <string name="test_cloud">Test cloud connection</string>
+    <string name="discover_urls">Discover cloud URLs</string>
+    <string name="discover_urls_hint">Change only if asked.</string>
+    <string name="discover_urls_ok">Found %1$d URLs. Tap one below.</string>
+    <string name="discover_urls_fail">Could not fetch setup info: %1$s</string>
+    <string name="use_url">Use %1$s</string>
+    <string name="save">Save</string>
+    <string name="flow_help_title">Session steps</string>
+    <string name="flow_step_1">1. First time: ⋮ → Install on watch. Then open FT Watch on the watch.</string>
+    <string name="flow_step_2">2. Enter participant code, weight, height, age, sex, and throwing technique.</string>
+    <string name="flow_step_3">3. Tap Test cloud connection, then Start session.</string>
+    <string name="flow_step_4">4. After each free throw, tap Hit or Miss.</string>
+    <string name="flow_step_5">5. After 10 shots, tap Finish session.</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_install_watch">Install on watch</string>
+    <string name="install_watch_intro">Install FT Watch on the Galaxy Watch (once).</string>
+    <string name="install_watch_step_1">1. Galaxy Wearable: Connected. Same Wi‑Fi.</string>
+    <string name="install_watch_step_2">2. On the watch: Settings → Developer options → Wireless debugging — on.</string>
+    <string name="install_watch_step_3">3. Tap Pair new device and leave the code on screen.</string>
+    <string name="install_watch_step_4">4. Enter the code above and tap the blue button. Then open FT Watch on the watch.</string>
+    <string name="install_watch_step_then">If Developer options is missing: Settings → About watch → Software information → tap Software version 7 times until Developer mode turns on.</string>
+    <string name="install_field_code">Code from the watch</string>
+    <string name="install_watch_need_code_once">Enter the Pair new device code, then tap the button.</string>
+    <string name="install_watch_timeout">Timed out. Leave Pair new device open and try again.</string>
+    <string name="install_watch_do_install">Pair and install on watch</string>
+    <string name="install_watch_preparing">Preparing FT Watch…</string>
+    <string name="install_watch_searching">Looking for the watch…</string>
+    <string name="install_watch_sending_wifi">Sending to the watch…</string>
+    <string name="install_watch_ssl_hint">Pairing worked, install did not. Use a new Pair new device code and try again.</string>
+    <string name="install_watch_wifi_failed">Failed: %1$s</string>
+    <string name="install_watch_waiting_after_send">Sent. Open FT Watch on the watch…</string>
+    <string name="install_watch_sent_open_app">%1$s\nOpen FT Watch on the watch once.</string>
+    <string name="install_watch_waiting_confirm">Waiting… (%1$d s)</string>
+    <string name="install_watch_success">FT Watch is installed.</string>
+    <string name="install_watch_already_ok">FT Watch is already installed</string>
+    <string name="install_watch_apk_missing">FT Watch APK is missing.</string>
+    <string name="install_notif_channel">FT Watch install</string>
+    <string name="install_notif_progress_title">FT Watch install</string>
+    <string name="install_notif_progress_body">Preparing…</string>
+    <string name="install_notif_sending_wifi">Sending over Wi‑Fi…</string>
+    <string name="install_notif_look_watch">Waiting for FT Watch</string>
+    <string name="install_notif_title">Installed on watch</string>
+    <string name="install_notif_body">FT Watch is installed. You can start a session.</string>
+    <string name="install_watch_close">Close</string>
+    <string name="section_setup">Enter participant code</string>
+    <string name="section_recording">Live recording</string>
+</resources>

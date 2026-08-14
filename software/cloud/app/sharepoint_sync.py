@@ -1,0 +1,293 @@
+"""Upload session data to SharePoint / OneDrive via Microsoft Graph API."""
+
+from __future__ import annotations
+
+import json
+import logging
+from pathlib import Path
+
+import httpx
+import msal
+
+from .config import settings
+from .storage import (
+    folder_name_for_session,
+    list_raw_stream_files,
+    protocol_session_path,
+    protocol_shots_path,
+    raw_capabilities_path,
+    raw_meta_path,
+    raw_stream_path,
+    session_raw_dir,
+)
+
+logger = logging.getLogger(__name__)
+
+GRAPH_SCOPE = ["Files.ReadWrite"]
+GRAPH_BASE = "https://graph.microsoft.com/v1.0"
+
+
+def _authority() -> str:
+    return f"https://login.microsoftonline.com/{settings.graph_tenant_id}"
+
+
+def _token_cache_path() -> Path:
+    return settings.graph_token_cache
+
+
+def _load_cache() -> msal.SerializableTokenCache:
+    cache = msal.SerializableTokenCache()
+    path = _token_cache_path()
+    if path.exists():
+        cache.deserialize(path.read_text(encoding="utf-8"))
+    return cache
+
+
+def _save_cache(cache: msal.SerializableTokenCache) -> None:
+    if cache.has_state_changed:
+        path = _token_cache_path()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(cache.serialize(), encoding="utf-8")
+
+
+def _msal_app() -> msal.PublicClientApplication:
+    return msal.PublicClientApplication(
+        settings.graph_client_id,
+        authority=_authority(),
+        token_cache=_load_cache(),
+    )
+
+
+def acquire_token_interactive() -> dict:
+    """Device-code login — run once via sharepoint_login.py."""
+    app = _msal_app()
+    accounts = app.get_accounts()
+    if accounts:
+        result = app.acquire_token_silent(GRAPH_SCOPE, account=accounts[0])
+        if result and "access_token" in result:
+            _save_cache(app.token_cache)
+            return result
+
+    flow = app.initiate_device_flow(scopes=GRAPH_SCOPE)
+    if "user_code" not in flow:
+        raise RuntimeError(f"Device flow failed: {flow}")
+
+    print(flow["message"])
+    result = app.acquire_token_by_device_flow(flow)
+    _save_cache(app.token_cache)
+
+    if "access_token" not in result:
+        raise RuntimeError(result.get("error_description", "Login failed"))
+    return result
+
+
+def _get_access_token() -> str:
+    app = _msal_app()
+    if not settings.graph_client_id:
+        raise RuntimeError("GRAPH_CLIENT_ID not set")
+
+    # Prefer silent refresh from cached account
+    accounts = app.get_accounts()
+    if accounts:
+        result = app.acquire_token_silent(GRAPH_SCOPE, account=accounts[0])
+        if result and "access_token" in result:
+            _save_cache(app.token_cache)
+            return result["access_token"]
+
+    # Always-on hosts: refresh token from env (set once after local login)
+    refresh = (settings.graph_refresh_token or "").strip()
+    if refresh:
+        result = app.acquire_token_by_refresh_token(refresh, scopes=GRAPH_SCOPE)
+        _save_cache(app.token_cache)
+        if result and "access_token" in result:
+            return result["access_token"]
+        raise RuntimeError(
+            result.get("error_description", "Refresh token login failed")
+        )
+
+    raise RuntimeError(
+        "OneDrive not logged in. Run sharepoint_login.py once, then set "
+        "GRAPH_REFRESH_TOKEN (or copy .token_cache.json) on the server."
+    )
+
+
+def _upload_file(token: str, remote_path: str, local_path: Path) -> None:
+    if not local_path.exists():
+        return
+    # remote_path e.g. "2026 Shooting data WD/S.../protocol/session.json"
+    url = (
+        f"{GRAPH_BASE}/me/drive/root:/{remote_path}:/content"
+    )
+    content = local_path.read_bytes()
+    response = httpx.put(
+        url,
+        headers={"Authorization": f"Bearer {token}"},
+        content=content,
+        timeout=120.0,
+    )
+    if response.status_code not in (200, 201):
+        raise RuntimeError(
+            f"Upload failed {local_path.name}: {response.status_code} {response.text[:300]}"
+        )
+
+
+def _delete_file(token: str, remote_path: str) -> bool:
+    url = f"{GRAPH_BASE}/me/drive/root:/{remote_path}"
+    response = httpx.delete(
+        url,
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=60.0,
+    )
+    return response.status_code in (200, 204, 404)
+
+
+def _copy_local(session_id: str) -> str | None:
+    """Copy to local OneDrive sync folder if configured."""
+    base = settings.sharepoint_local_path
+    if not base:
+        return None
+    label = folder_name_for_session(session_id)
+    dest = base / label
+    dest.mkdir(parents=True, exist_ok=True)
+
+    files = [
+        (protocol_session_path(session_id), dest / "protocol" / "session.json"),
+        (protocol_shots_path(session_id), dest / "protocol" / "shots.jsonl"),
+        (raw_meta_path(session_id), dest / "raw" / "meta.json"),
+        (raw_capabilities_path(session_id), dest / "raw" / "capabilities.json"),
+    ]
+    for stream_file in list_raw_stream_files(session_id):
+        files.append((stream_file, dest / "raw" / stream_file.name))
+    for src, dst in files:
+        if src.exists():
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            dst.write_bytes(src.read_bytes())
+    return str(dest)
+
+
+def sync_session(session_id: str) -> dict:
+    """Sync one session to SharePoint folder + optional local mirror."""
+    folder = settings.sharepoint_folder.strip("/\\")
+    label = folder_name_for_session(session_id)
+    remote_base = f"{folder}/{label}"
+    uploaded: list[str] = []
+
+    local_dest = _copy_local(session_id)
+    if local_dest:
+        uploaded.append(f"local:{local_dest}")
+
+    if not settings.sharepoint_enabled:
+        return {
+            "status": "skipped",
+            "reason": "sharepoint_enabled=false",
+            "uploaded": uploaded,
+        }
+
+    if not settings.graph_client_id:
+        if local_dest:
+            return {"status": "ok", "mode": "local_only", "uploaded": uploaded}
+        return {
+            "status": "skipped",
+            "reason": "GRAPH_CLIENT_ID not set",
+            "uploaded": [],
+        }
+
+    token = _get_access_token()
+    file_map = [
+        (protocol_session_path(session_id), f"{remote_base}/protocol/session.json"),
+        (protocol_shots_path(session_id), f"{remote_base}/protocol/shots.jsonl"),
+        (raw_meta_path(session_id), f"{remote_base}/raw/meta.json"),
+        (raw_capabilities_path(session_id), f"{remote_base}/raw/capabilities.json"),
+    ]
+    for stream_file in list_raw_stream_files(session_id):
+        file_map.append((stream_file, f"{remote_base}/raw/{stream_file.name}"))
+    for local_path, remote_path in file_map:
+        if local_path.exists():
+            _upload_file(token, remote_path, local_path)
+            uploaded.append(remote_path)
+
+    manifest = {
+        "session_id": session_id,
+        "folder_name": label,
+        "sharepoint_folder": folder,
+        "files": uploaded,
+    }
+    manifest_path = settings.data_root / "sync_manifests" / f"{session_id}.json"
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+    return {
+        "status": "ok",
+        "mode": "graph",
+        "remote_base": remote_base,
+        "uploaded": uploaded,
+        "sharepoint_url": (
+            f"https://vgtuitsc-my.sharepoint.com/personal/"
+            f"anastasija_grubinskiene_vilniustech_lt/Documents/{folder}/{label}"
+        ),
+    }
+
+
+def sync_all_finished() -> list[dict]:
+    results = []
+    for path in settings.protocol_root.iterdir():
+        if not path.is_dir():
+            continue
+        session_file = path / "session.json"
+        if not session_file.exists():
+            continue
+        data = json.loads(session_file.read_text(encoding="utf-8"))
+        if data.get("status") != "finished":
+            continue
+        sid = data["session_id"]
+        try:
+            results.append({"session_id": sid, **sync_session(sid)})
+        except Exception as exc:
+            results.append({"session_id": sid, "status": "error", "error": str(exc)})
+    return results
+
+
+def instruction_pack_root() -> str:
+    folder = settings.sharepoint_folder.strip("/\\")
+    if folder.lower().endswith("/results"):
+        return folder[: -len("/results")]
+    return folder
+
+
+def sync_instruction_pack() -> dict:
+    """Upload protocol files to the OneDrive pack folder (not into results/)."""
+    docs = Path(__file__).resolve().parent / "static" / "docs"
+    root = instruction_pack_root()
+    mapping = [
+        (docs / "Instructions_EN.txt", f"{root}/Instructions_EN.txt"),
+        (docs / "Instrukcija_LT.txt", f"{root}/Instrukcija_LT.txt"),
+        (docs / "results_README.txt", f"{root}/results/README_LT.txt"),
+        (docs / "results_README_EN.txt", f"{root}/results/README_EN.txt"),
+    ]
+    if not settings.sharepoint_enabled or not settings.graph_client_id:
+        return {"status": "skipped", "reason": "sharepoint not configured"}
+    token = _get_access_token()
+    uploaded: list[str] = []
+    for local_path, remote_path in mapping:
+        if not local_path.exists():
+            continue
+        _upload_file(token, remote_path, local_path)
+        uploaded.append(remote_path)
+    deleted: list[str] = []
+    for extra in ("README.txt", "README_LT.txt", "README_EN.txt"):
+        remote = f"{root}/{extra}"
+        if _delete_file(token, remote):
+            deleted.append(remote)
+    old_results_readme = f"{root}/results/README.txt"
+    if _delete_file(token, old_results_readme):
+        deleted.append(old_results_readme)
+    return {
+        "status": "ok",
+        "folder": root,
+        "uploaded": uploaded,
+        "deleted": deleted,
+        "sharepoint_url": (
+            "https://vgtuitsc-my.sharepoint.com/personal/"
+            "anastasija_grubinskiene_vilniustech_lt/Documents/" + root
+        ),
+    }

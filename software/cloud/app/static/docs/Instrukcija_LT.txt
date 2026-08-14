@@ -1,0 +1,27 @@
+Baudų metimų duomenų rinkimas
+VILNIUS TECH · Elektroninių sistemų katedra
+
+Diegimas
+1. Telefone įdiekite FT-Protocol.apk.
+2. FT Watch įdiegiama per telefono programą FT Protocol: FT Protocol → ⋮ → Install on watch (vieną kartą). Telefonas ir laikrodis turi būti tame pačiame Wi-Fi tinkle.
+3. Laikrodyje atidarykite FT Watch ir palikite atidarytą.
+
+Jutikliai (vieną kartą laikrodyje)
+Settings → Apps → Health Sensor Service → bakstelėkite pavadinimą apie 10 kartų → Developer mode ON.
+
+Prieš kiekvieną sesiją
+Atidarykite FT Watch. Telefone spauskite Test cloud connection (turi būti OK).
+
+Sesija
+1. Laikrodis ant rankos.
+2. Įrašykite dalyvio kodą, svorį, ūgį, amžių, lytį, metimo techniką.
+3. Start session.
+4. 10 baudų; po kiekvieno metimo Hit arba Miss.
+5. Finish session.
+
+Kokie signalai įrašomi
+Akselerometras (x, y, z), pulsas (bpm) ir PPG (žalia, IR, raudona). Jei laikrodis dėvimas ilgiau ir dalyvis yra ramioje būsenoje, įrašoma ir odos temperatūra.
+
+Po Finish session įrašas atsiranda results aplanke.
+
+Klausimai: Anastasija Grubinskienė, anastasija.grubinskiene@vilniustech.lt

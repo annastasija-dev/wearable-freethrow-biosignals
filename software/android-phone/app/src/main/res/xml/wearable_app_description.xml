@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wearableApp package="lt.vilniustech.basketball.watch">
+    <versionCode>51</versionCode>
+    <versionName>0.5.1</versionName>
+    <rawPathResId>wearable_app</rawPathResId>
+</wearableApp>

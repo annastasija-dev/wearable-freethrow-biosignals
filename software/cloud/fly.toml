@@ -1,0 +1,28 @@
+# fly.toml app name will be set on first launch
+app = "ft-cloud-vgtu"
+primary_region = "ams"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  DATA_ROOT = "/data"
+  SHAREPOINT_ENABLED = "true"
+  SHAREPOINT_FOLDER = "2026 Shooting data Samsung/Baudu metimu duomenys/results"
+  GRAPH_TENANT_ID = "vgtuitsc.onmicrosoft.com"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1
+
+[mounts]
+  source = "ft_cloud_data"
+  destination = "/data"

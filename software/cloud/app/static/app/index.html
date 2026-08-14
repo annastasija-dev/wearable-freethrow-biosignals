@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="lt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>FT Protocol</title>
+  <style>
+    :root { font-family: system-ui, sans-serif; }
+    body { margin: 0; padding: 16px; background: #f5f7fb; color: #111; }
+    h1 { font-size: 1.4rem; margin: 0 0 12px; }
+    .card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.08); margin-bottom: 12px; }
+    input, button { width: 100%; box-sizing: border-box; font-size: 1.1rem; padding: 14px; border-radius: 10px; border: 1px solid #ccd3df; }
+    button { border: none; font-weight: 700; margin-top: 10px; }
+    .start { background: #1f6feb; color: #fff; }
+    .hit { background: #1a7f37; color: #fff; min-height: 72px; }
+    .miss { background: #cf222e; color: #fff; min-height: 72px; }
+    .finish { background: #57606a; color: #fff; }
+    button:disabled { opacity: .45; }
+    .muted { color: #57606a; font-size: .95rem; }
+    .counter { font-size: 1.6rem; font-weight: 700; margin: 8px 0; }
+    .status { word-break: break-all; }
+  </style>
+</head>
+<body>
+  <h1>Free-Throw Protocol</h1>
+  <div class="card">
+    <label class="muted">Participant code</label>
+    <input id="participant" placeholder="P001" />
+    <label class="muted" style="margin-top:10px;display:block">API key</label>
+    <input id="apiKey" value="dev-change-me" />
+    <button class="start" id="startBtn">START SESSION (10 shots)</button>
+  </div>
+
+  <div class="card">
+    <div class="status" id="status">No active session</div>
+    <div class="counter" id="counter">Shots: 0/10</div>
+    <button class="hit" id="hitBtn" disabled>PATAIKE</button>
+    <button class="miss" id="missBtn" disabled>NEPATAIKE</button>
+    <button class="finish" id="finishBtn" disabled>FINISH SESSION</button>
+  </div>
+
+  <p class="muted">Naudokite telefono naršyklę kol Android app dar neinstaliuota. Raw IMU ateina per watch app atskirai.</p>
+
+  <script>
+    const state = { sessionId: '', shotsDone: 0, shotsTarget: 10, active: false };
+
+    const el = (id) => document.getElementById(id);
+    const headers = () => ({
+      'Content-Type': 'application/json',
+      'X-API-Key': el('apiKey').value.trim(),
+    });
+
+    async function api(path, body) {
+      const res = await fetch(path, { method: 'POST', headers: headers(), body: JSON.stringify(body || {}) });
+      const text = await res.text();
+      if (!res.ok) throw new Error(text || res.statusText);
+      return text ? JSON.parse(text) : {};
+    }
+
+    function render() {
+      el('status').textContent = state.active ? `Recording: ${state.sessionId}` : 'No active session';
+      el('counter').textContent = `Shots: ${state.shotsDone}/${state.shotsTarget}`;
+      el('startBtn').disabled = state.active;
+      el('hitBtn').disabled = !state.active || state.shotsDone >= state.shotsTarget;
+      el('missBtn').disabled = !state.active || state.shotsDone >= state.shotsTarget;
+      el('finishBtn').disabled = !state.active;
+    }
+
+    el('startBtn').onclick = async () => {
+      try {
+        const participant = el('participant').value.trim();
+        if (!participant) return alert('Enter participant code');
+        const res = await api('/api/v1/sessions/start', {
+          participant_code: participant,
+          watch_model: 'Galaxy Watch',
+          wrist: 'right',
+          phone_model: navigator.userAgent.slice(0, 120),
+        });
+        state.sessionId = res.session_id;
+        state.shotsDone = 0;
+        state.shotsTarget = res.shots_target;
+        state.active = true;
+        render();
+      } catch (e) { alert(e.message); }
+    };
+
+    async function label(result) {
+      try {
+        const res = await api(`/api/v1/sessions/${state.sessionId}/shots`, {
+          result,
+          client_timestamp: new Date().toISOString(),
+          shot_no: state.shotsDone + 1,
+        });
+        state.shotsDone = res.shot_no;
+        render();
+        if (res.done) alert('10/10 done. Press Finish session.');
+      } catch (e) { alert(e.message); }
+    }
+
+    el('hitBtn').onclick = () => label('hit');
+    el('missBtn').onclick = () => label('miss');
+    el('finishBtn').onclick = async () => {
+      try {
+        await api(`/api/v1/sessions/${state.sessionId}/finish`, {});
+        state.active = false;
+        state.sessionId = '';
+        state.shotsDone = 0;
+        render();
+        alert('Session saved to cloud');
+      } catch (e) { alert(e.message); }
+    };
+
+    render();
+  </script>
+</body>
+</html>

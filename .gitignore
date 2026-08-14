@@ -1,0 +1,42 @@
+# LaTeX build
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.pdf
+!figures/*.pdf
+!Definitions/*.pdf
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+__pycache__/
+*.pyc
+
+# Local Overleaf / browser junk
+.overleaf_browser_profile/
+.pw_overleaf/
+
+# Software
+software/**/.gradle/
+software/**/.idea/
+software/**/.kotlin/
+software/**/build/
+software/**/local.properties
+software/cloud/.venv/
+software/cloud/data/
+software/cloud/.env
+software/cloud/.token_cache.json
+*.jks
+*.apk
+

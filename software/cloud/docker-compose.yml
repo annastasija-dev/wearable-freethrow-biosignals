@@ -1,0 +1,10 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      API_KEY: dev-change-me
+      DATA_ROOT: /data
+    volumes:
+      - ./data:/data

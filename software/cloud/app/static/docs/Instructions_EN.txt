@@ -1,0 +1,27 @@
+Free-throw data collection
+VILNIUS TECH · Department of Electronic Systems
+
+Install
+1. Install FT-Protocol.apk on the phone.
+2. FT Watch is installed through the phone app FT Protocol: FT Protocol → ⋮ → Install on watch (once). The phone and the watch must be on the same Wi-Fi network.
+3. Open FT Watch on the watch and leave it open.
+
+Sensors (once on the watch)
+Settings → Apps → Health Sensor Service → tap the name about 10 times → Developer mode ON.
+
+Before each session
+Open FT Watch. On the phone tap Test cloud connection (must be OK).
+
+Session
+1. Watch on the wrist.
+2. Enter participant code, weight, height, age, sex, throwing technique.
+3. Start session.
+4. 10 free throws; after each shot tap Hit or Miss.
+5. Finish session.
+
+Recorded signals
+Accelerometer (x, y, z), heart rate (bpm), and PPG (green, IR, red). If the watch is worn for longer and the participant is at rest, skin temperature is also recorded.
+
+After Finish session the record appears in the results folder.
+
+Questions: Anastasija Grubinskienė, anastasija.grubinskiene@vilniustech.lt

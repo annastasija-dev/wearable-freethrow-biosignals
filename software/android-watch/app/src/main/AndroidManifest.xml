@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+    <uses-feature android:name="android.hardware.type.watch" />
+
+
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+
+    <uses-permission android:name="android.permission.BODY_SENSORS" />
+
+    <uses-permission android:name="com.samsung.android.hardware.sensormanager.permission.READ_ADDITIONAL_HEALTH_DATA" />
+
+
+
+    <application
+
+        android:name=".FtWatchApp"
+
+        android:allowBackup="true"
+
+        android:icon="@mipmap/ic_launcher"
+
+        android:label="@string/app_name"
+
+        android:supportsRtl="true"
+
+        android:networkSecurityConfig="@xml/network_security_config"
+
+        android:theme="@style/Theme.BasketballWatch">
+
+
+
+        <uses-library
+
+            android:name="com.google.android.wearable"
+
+            android:required="true" />
+
+
+
+        <meta-data
+
+            android:name="com.google.android.wearable.standalone"
+
+            android:value="false" />
+
+
+
+        <meta-data
+
+            android:name="com.google.android.gms.wearable.CAPABILITIES"
+
+            android:resource="@xml/wearable_capabilities" />
+
+
+
+        <activity
+
+            android:name=".MainActivity"
+
+            android:exported="true"
+
+            android:launchMode="singleTop"
+
+            android:label="@string/app_name">
+
+            <intent-filter>
+
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+
+            </intent-filter>
+
+            <intent-filter>
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+
+                    android:host="start"
+
+                    android:scheme="ftwatch" />
+
+            </intent-filter>
+
+        </activity>
+
+
+
+        <service
+
+            android:name=".WatchCommandService"
+
+            android:exported="true"
+
+            android:permission="com.google.android.gms.permission.BIND_LISTENER">
+
+            <intent-filter>
+
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+
+                <data
+
+                    android:host="*"
+
+                    android:pathPrefix="/basketball"
+
+                    android:scheme="wear" />
+
+            </intent-filter>
+
+        </service>
+
+
+
+        <service
+
+            android:name=".WatchDataService"
+
+            android:exported="true"
+
+            android:permission="com.google.android.gms.permission.BIND_LISTENER">
+
+            <intent-filter>
+
+                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+
+                <data
+
+                    android:host="*"
+
+                    android:pathPrefix="/basketball"
+
+                    android:scheme="wear" />
+
+            </intent-filter>
+
+        </service>
+
+
+
+        <service
+
+            android:name=".WatchLinkService"
+
+            android:exported="false"
+
+            android:foregroundServiceType="health" />
+
+
+
+        <service
+
+            android:name=".RecordingForegroundService"
+
+            android:exported="false"
+
+            android:foregroundServiceType="health" />
+
+
+
+        <receiver
+
+            android:name=".DebugStartReceiver"
+
+            android:exported="true">
+
+            <intent-filter>
+
+                <action android:name="lt.vilniustech.basketball.watch.START_TEST" />
+
+            </intent-filter>
+
+        </receiver>
+
+    </application>
+
+</manifest>
+

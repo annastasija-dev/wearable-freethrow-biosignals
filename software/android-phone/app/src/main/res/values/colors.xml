@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="hit_green">#10B981</color>
+    <color name="hit_green_dark">#059669</color>
+    <color name="miss_red">#F43F5E</color>
+    <color name="miss_red_dark">#E11D48</color>
+    <color name="primary_blue">#0EA5E9</color>
+    <color name="check_ok">#15803D</color>
+    <color name="check_bad">#B91C1C</color>
+    <color name="primary_dark">#0C4A6E</color>
+    <color name="primary_soft">#E0F2FE</color>
+    <color name="bg_light">#F0F9FF</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#475569</color>
+    <color name="text_hint">#64748B</color>
+    <color name="watch_ok_bg">#D1FAE5</color>
+    <color name="watch_ok_text">#065F46</color>
+    <color name="watch_off_bg">#E2E8F0</color>
+    <color name="watch_off_text">#475569</color>
+    <color name="chip_idle_bg">#BAE6FD</color>
+    <color name="chip_idle_text">#0C4A6E</color>
+    <color name="chip_recording_bg">#A7F3D0</color>
+    <color name="chip_recording_text">#065F46</color>
+    <color name="outline_soft">#CBD5E1</color>
+    <color name="banner_bg">#0284C7</color>
+    <color name="icon_bg_start">#0EA5E9</color>
+    <color name="icon_bg_end">#0369A1</color>
+    <color name="icon_hoop">#F8FAFC</color>
+    <color name="icon_ball">#F97316</color>
+</resources>

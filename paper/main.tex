@@ -1,0 +1,620 @@
+%  BUILD_ID: 20260715-figure1-v13-wide
+
+%  LaTeX support: latex@mdpi.com
+
+%=================================================================
+
+\documentclass[sensors,article,submit,pdftex,moreauthors]{Definitions/mdpi}
+
+
+
+% Placeholder markers: red TEXT where content is still pending
+
+\newcommand{\ph}{\textcolor{red}{TEXT}}
+
+\newcommand{\phh}{\ph{}\ \ph{}\ \ph{}}
+
+
+
+\setlength{\headheight}{20pt}
+
+
+
+\firstpage{1}
+
+\makeatletter
+
+\setcounter{page}{\@firstpage}
+
+\makeatother
+
+\pubvolume{1}
+
+\issuenum{1}
+
+\articlenumber{0}
+
+\pubyear{2026}
+
+\copyrightyear{2026}
+
+\datereceived{\phh}
+
+\daterevised{\phh}
+
+\dateaccepted{\phh}
+
+\datepublished{\phh}
+
+
+
+\Title{Wearable Biomedical Signals for Free-Throw Outcome Prediction: A Field-Deployable Smartwatch--Smartphone Framework}
+
+
+
+\newcommand{\orcidauthorA}{\phh}
+
+\newcommand{\orcidauthorB}{\phh}
+
+
+
+\Author{Anastasija Grubinskienė $^{1,}$*\orcidA{} and Andrius Katkevičius $^{1}$\orcidB{}}
+
+
+
+\AuthorNames{Anastasija Grubinskienė and Andrius Katkevičius}
+
+
+
+\address{%
+
+$^{1}$ \quad Department of Electronic Systems, Vilnius Gediminas Technical University, LT-10223 Vilnius, Lithuania}
+
+
+
+\corres{Corresponding author: A. Grubinskienė (e-mail: anastasija.grubinskiene@vilniustech.lt).}
+
+
+
+\abstract{In sports training, intelligent electronic systems enable quantitative assessment of athletic movements through wearable sensor acquisition and biomedical signal processing. Wrist-worn smartwatches paired with smartphones provide continuous access to accelerometer, cardiovascular, and optical time series during field activity. This study concerns basketball free-throw shooting as a closed motor skill in which outcome-related information may be carried by multimodal biosignals recorded on the shooting wrist. A field-deployable smartwatch--smartphone framework synchronises four continuous vendor SDK streams---accelerometer, heart rate (with inter-beat intervals), photoplethysmography, and skin temperature---with operator-verified hit/miss labels entered in real time through a dedicated Android protocol application. Samples are timestamped and stored per stream in a cloud \texttt{raw/} repository; protocol metadata are archived separately under \texttt{protocol/} with shared session identifiers for temporal co-registration. The end-to-end electronic acquisition chain---from on-wrist sensing through mobile relay to structured cloud ingestion---supports subsequent unimodal biomedical signal processing or multimodal signal fusion. \phh}
+
+
+
+\keyword{electronic systems; biomedical signal processing; wearable sensors; smartwatch; accelerometer; heart rate; photoplethysmography; mobile health platform; basketball; free-throw shooting; sensor fusion}
+
+
+
+\begin{document}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+
+
+Intelligent electronic systems are increasingly used in sports to acquire, transmit, and process sensor signals that characterise athletic movement~\cite{Holgado2026,Casaccia2026}. Consumer wrist-worn devices coupled with smartphones form a practical acquisition layer: biomedical signals are sampled on the watch, relayed over a mobile link, and made available for downstream biomedical signal processing~\cite{Fyntikakis2026,Paolo2026}.
+
+
+
+Free-throw shooting is a closed motor skill in which timing, limb kinematics, and autonomic regulation may vary across attempts~\cite{Guo2023,Sonalcan2025}. Prior basketball studies have also employed video-based pose estimation~\cite{DENG2025,Zhao2022} or professional body-sensor networks; these lines of work are methodologically distinct from the present wearable SDK framework and are cited here only to situate the acquisition problem. Wearable inertial studies show that wrist kinematic descriptors can discriminate skill level or relate to shot outcome~\cite{Guo2023}, but they often depend on specialised sensor placements, offline annotation, or laboratory-centred setups.
+
+
+
+Consumer smartwatches expose multiple biomedical streams through a unified software development kit (SDK), enabling repeated wrist-level acquisition outside controlled laboratories~\cite{Holgado2026,Fyntikakis2026}. A complementary requirement for supervised analysis is an outcome channel with verified hit/miss labels time-aligned to the recorded biosignals. The present work addresses that acquisition problem in a sports-hall setting.
+
+
+
+This paper describes an end-to-end smartwatch--smartphone electronic system for synchronised collection of multimodal wearable biosignals and real-time free-throw outcome labels. Two native Android applications implement the chain: a \textbf{watch acquisition application} on a wrist-worn Wear~OS device and a \textbf{protocol application} on a paired Android smartphone. The architecture separates \texttt{protocol/} outcome logs from \texttt{raw/} biosignal batches while preserving shared pseudonymous identifiers and millisecond-resolution timestamps (Figure~\ref{fig:architecture}). The session protocol defines ten consecutive labeled attempts per participant under operator supervision.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Literature Review}
+
+
+
+\subsection{Wearable Electronic Systems and Biomedical Signal Processing}
+
+
+
+\phh
+
+
+
+\subsection{Multimodal Wrist Biosignals Relevant to Motor-Skill Monitoring}
+
+
+
+\phh
+
+
+
+\subsection{Consumer Smartwatch SDKs for Continuous Biosignal Acquisition}
+
+
+
+\phh
+
+
+
+\subsection{Research Gap}
+
+\label{sec:gap}
+
+
+
+\phh
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Materials and Methods}
+
+
+
+This section describes the deployed smartwatch--smartphone--cloud acquisition system (Figure~\ref{fig:architecture}). The implementation comprises two native Android applications---a watch acquisition application on a wrist-worn Wear~OS device and a protocol application on a paired Android smartphone---and a FastAPI cloud backend that stores protocol labels and per-stream raw biosignals under a shared session identifier.
+
+
+
+\begin{figure}[H]
+
+\begin{adjustwidth}{-\extralength}{0cm}
+
+\centering
+
+\includegraphics[width=\fulllength,keepaspectratio]{figures/figure1-architecture.png}
+
+\end{adjustwidth}
+
+\caption{End-to-end data acquisition and evaluation architecture. \textbf{Data acquisition pipeline:} the protocol application records real-time hit/miss labels with synchronised timestamps; the smartwatch streams inertial and biomedical signals via Bluetooth/SDK to the protocol application on the smartphone. \textbf{Cloud infrastructure:} session metadata are stored in protocol storage; per-stream raw biosignals are uploaded as JSONL batches to raw biosignal storage. \textbf{Evaluation:} temporal co-registration aligns labels and biosignals, followed by machine learning evaluation (planned).\label{fig:architecture}}
+
+\end{figure}
+
+
+
+\subsection{Study Setting and Experimental Protocol}
+
+
+
+Sessions are conducted in a sports hall under routine basketball practice conditions. Each participant receives a pseudonymous identifier (e.g., P001, P002) entered in the protocol application before recording starts. A wrist-worn smartwatch is worn on the \textbf{shooting wrist} for the full session; the wrist side is recorded in session metadata. After pairing checks and cloud connectivity verification, the operator starts the session in the protocol application, which creates a cloud session via \texttt{POST /api/v1/sessions/start} and broadcasts a UDP discovery beacon (port~8788) so the watch application can join the same session identifier.
+
+
+
+The participant then performs \textbf{ten consecutive free-throw attempts}. After each attempt, the operator immediately taps \emph{Hit} or \emph{Miss} in the protocol application. Each label is uploaded to \texttt{POST /api/v1/sessions/\{id\}/shots} with fields \texttt{result} (\texttt{hit} or \texttt{miss}), \texttt{shot\_no} (1--10), and \texttt{client\_timestamp} (UTC, millisecond resolution). When all ten shots are labelled, the operator taps \emph{Finish}; the protocol application calls \texttt{POST /api/v1/sessions/\{id\}/finish} after a 15\,s grace period to flush pending uploads.
+
+
+
+\subsection{Hardware and Software}
+
+
+
+\begin{itemize}
+
+\item \textbf{Smartwatch:} wrist-worn Wear~OS device running the watch acquisition application and vendor health sensor SDK.
+
+\item \textbf{Smartphone:} Android device running the protocol application.
+
+\item \textbf{Cloud server:} FastAPI REST service on a local PC (\texttt{:8080}), storing data under \texttt{cloud/data/raw/} and \texttt{cloud/data/protocol/}. Optional SharePoint/OneDrive sync for archival export.
+
+\item \textbf{Network:} phone and cloud PC on the same Wi-Fi (LAN URL, e.g.\ \texttt{http://192.168.x.x:8080}); watch discovers cloud via UDP beacon or polls \texttt{GET /api/v1/sessions/active}.
+
+\end{itemize}
+
+
+
+Vendor \textbf{developer mode} must be enabled on the watch for SDK sensor access during research sessions.
+
+
+
+\subsection{Wearable Biosignal Acquisition}
+
+
+
+The watch application is the sole biomedical sensing node. At session start, a multi-stream tracker module connects to the vendor \texttt{HealthTrackingService} and queries supported continuous tracker types at runtime. Four continuous streams are registered and started in parallel when exposed by the device firmware:
+
+
+
+\begin{itemize}
+
+\item \texttt{ACCELEROMETER\_CONTINUOUS} (${\sim}$25\,Hz) $\rightarrow$ \texttt{accelerometer.jsonl}
+
+\item \texttt{HEART\_RATE\_CONTINUOUS} (${\sim}$1\,Hz) $\rightarrow$ \texttt{heart\_rate.jsonl}
+
+\item \texttt{PPG\_CONTINUOUS} (${\sim}$25\,Hz; green, IR, red channels) $\rightarrow$ \texttt{ppg.jsonl}
+
+\item \texttt{SKIN\_TEMPERATURE\_CONTINUOUS} (periodic) $\rightarrow$ \texttt{skin\_temperature.jsonl}
+
+\end{itemize}
+
+
+
+Optional continuous streams beyond the four deployed channels are ingested only when exposed by the watch firmware at runtime. On-demand trackers (\texttt{ECG\_ON\_DEMAND}, \texttt{SPO2\_ON\_DEMAND}, \texttt{BIA\_ON\_DEMAND}) are excluded because they are not continuous and conflict with parallel streaming. The SDK does not expose gyroscope or magnetometer channels.
+
+
+
+Each sample is timestamped on the watch (\texttt{time\_ms}, Unix epoch milliseconds) and tagged with \texttt{stream} and \texttt{source}. The watch application uploads batches via \texttt{POST /api/v1/sessions/\{id\}/raw/batch} over HTTPS; a secondary relay path sends samples to the protocol application over the Wearable Message API for phone-side buffering and re-upload if direct cloud access fails.
+
+
+
+At session start, the watch application also uploads a capabilities manifest (\texttt{POST /api/v1/sessions/\{id\}/raw/capabilities}) listing \texttt{supported\_streams}, \texttt{active\_streams}, \texttt{sdk\_version}, and \texttt{tracker\_mode}.
+
+
+
+\subsection{Smartphone Protocol Application}
+
+
+
+The protocol application manages the supervised outcome channel independently of biosignal ingestion. On session start it records participant code, device metadata, shooting wrist, and generates a session identifier of the form \texttt{\{PARTICIPANT\}\_YYYYMMDD\_HHMM} (local timezone). During recording, the protocol application:
+
+
+
+\begin{itemize}
+
+\item publishes the active session to the watch via the Wearable Data Layer;
+
+\item relays watch biosignal batches received over the Wearable Message API to the cloud;
+
+\item buffers and uploads hit/miss labels to \texttt{protocol/\{session\_id\}/shots.jsonl}.
+
+\end{itemize}
+
+
+
+Protocol logging and raw biosignal ingestion are decoupled so that label completeness and per-stream sample counts can be audited independently.
+
+
+
+\subsection{Cloud Data Collection and Storage}
+
+
+
+The cloud backend exposes a REST API secured by an \texttt{X-API-Key} header. For every session, two parallel directory trees are created under a shared \texttt{session\_id}:
+
+
+
+\begin{itemize}
+
+\item \texttt{protocol/\{session\_id\}/} --- \texttt{session.json} (metadata, start/end times, status) and \texttt{shots.jsonl} (ten labelled attempts);
+
+\item \texttt{raw/\{session\_id\}/} --- per-stream \texttt{*.jsonl} files, \texttt{meta.json} (aggregate counts and status), and \texttt{capabilities.json} (runtime SDK probe).
+
+\end{itemize}
+
+
+
+Upload occurs over HTTPS from the protocol application (labels and relayed batches) and directly from the watch application (primary raw path). Session identifiers and millisecond timestamps enable post-hoc temporal co-registration of each labelled shot with the concurrent multichannel biosignal segment.
+
+
+
+\subsection{Participants}
+
+
+
+Participants are recruited from basketball training groups. Inclusion criteria are absence of medical contraindications to shooting practice, no high-intensity exercise immediately before testing, and agreement to wear the smartwatch on the shooting wrist throughout the session. The study protocol follows the Declaration of Helsinki and was approved by the Vilnius Gediminas Technical University Institutional Ethics Committee (protocol code 376-376-10, approved on 2 May 2024). Written informed consent is obtained before participation. Participant identifiers are pseudonymous and are not derived from personal names. \phh
+
+
+
+\subsection{Dataset Structure}
+
+
+
+Each free-throw attempt comprises: (i)~a binary outcome label (hit/miss); (ii)~protocol metadata (participant ID, session ID, shot index, label timestamp); and (iii)~the concurrent multichannel wearable biosignal segment from all active SDK streams. Table~\ref{tab:shootlog} shows the protocol-side log structure; Table~\ref{tab:rawstreams} lists the raw files collected and their JSON fields.
+
+
+
+\begin{table}[H]
+
+\caption{Protocol-side free-throw log structure (\texttt{protocol/\{session\_id\}/shots.jsonl}).\label{tab:shootlog}}
+
+\small
+
+\begin{tabularx}{\textwidth}{@{}lccXcc@{}}
+
+\toprule
+
+\textbf{Part. ID} & \textbf{Sess. ID} & \textbf{Shot} & \textbf{Timestamp (UTC)} & \textbf{Result} & \textbf{Notes} \\
+
+\midrule
+
+P001 & P001\_20260713\_0138 & 1 & YYYY-MM-DDTHH:MM:SS.sss & miss & sports hall \\
+
+P001 & P001\_20260713\_0138 & 2 & YYYY-MM-DDTHH:MM:SS.sss & hit & sports hall \\
+
+$\vcenter{\hbox{\vdots}}$ & $\vcenter{\hbox{\vdots}}$ & $\vcenter{\hbox{\vdots}}$ & $\vcenter{\hbox{\vdots}}$ & $\vcenter{\hbox{\vdots}}$ & $\vcenter{\hbox{\vdots}}$ \\
+
+P001 & P001\_20260713\_0138 & 10 & YYYY-MM-DDTHH:MM:SS.sss & hit/miss & sports hall \\
+
+\bottomrule
+
+\end{tabularx}
+
+\end{table}
+
+
+
+\begin{table}[H]
+
+\caption{Raw biosignal files collected per session under \texttt{raw/\{session\_id\}/} and JSON fields stored in each file.\label{tab:rawstreams}}
+
+\small
+
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+
+\toprule
+
+\textbf{File} & \textbf{JSON fields} \\
+
+\midrule
+
+\texttt{meta.json} & \texttt{session\_id}, \texttt{participant\_code}, \texttt{started\_at}, \texttt{ended\_at}, \texttt{status}, \texttt{streams}, \texttt{stream\_sample\_counts} \\
+
+\texttt{capabilities.json} & \texttt{supported\_streams}, \texttt{active\_streams}, \texttt{sdk\_version}, \texttt{tracker\_mode} \\
+
+\texttt{accelerometer.jsonl} & \texttt{time\_ms}, \texttt{x}, \texttt{y}, \texttt{z}, \texttt{stream}, \texttt{source} \\
+
+\texttt{heart\_rate.jsonl} & \texttt{time\_ms}, \texttt{bpm}, \texttt{ibi\_ms[]}, \texttt{status}, \texttt{stream}, \texttt{source} \\
+
+\texttt{ppg.jsonl} & \texttt{time\_ms}, \texttt{green}, \texttt{ir}, \texttt{red}, \texttt{stream}, \texttt{source} \\
+
+\texttt{skin\_temperature.jsonl} & \texttt{time\_ms}, \texttt{object\_temp\_c}, \texttt{ambient\_temp\_c}, \texttt{status}, \texttt{stream}, \texttt{source} \\
+
+\bottomrule
+
+\end{tabularx}
+
+\noindent{\footnotesize Each row in a \texttt{*.jsonl} file is one timestamped SDK sample. Nominal rates: accelerometer and PPG ${\sim}$25\,Hz; heart rate ${\sim}$1\,Hz; skin temperature periodic.}
+
+\end{table}
+
+
+
+\subsection{Signal Processing and Analysis Pipeline}
+
+
+
+After field collection is complete, fixed-duration windows anchored to each labelled shot timestamp will be extracted from all active SDK streams. The following subsections describe the planned analysis workflow.
+
+
+
+\subsubsection{Temporal Alignment and Windowing}
+
+
+
+\phh
+
+
+
+\subsubsection{Feature Extraction}
+
+
+
+\phh
+
+
+
+\subsubsection{Unimodal and Multimodal Classification}
+
+
+
+\phh
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Results}
+
+
+
+\subsection{Continuous Biosignal Stream Inventory}
+
+
+
+\phh
+
+
+
+\subsection{Accelerometer Stream Characteristics}
+
+
+
+\phh
+
+
+
+\subsection{Heart Rate and Inter-Beat Interval Characteristics}
+
+
+
+\phh
+
+
+
+\subsection{Photoplethysmography Stream Characteristics}
+
+
+
+\phh
+
+
+
+\subsection{Skin Temperature Characteristics}
+
+
+
+\phh
+
+
+
+\subsection{Temporal Co-Registration with Protocol Labels}
+
+
+
+\phh
+
+
+
+\subsection{Dataset Overview}
+
+
+
+\phh
+
+
+
+\subsection{Multimodal Signal Fusion and Outcome Prediction}
+
+
+
+\phh
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Discussion}
+
+
+
+\subsection{Acquisition Framework}
+
+
+
+\phh
+
+
+
+\subsection{Biomedical Signal Processing}
+
+
+
+\phh
+
+
+
+\subsection{Comparison with Prior Approaches}
+
+
+
+\phh
+
+
+
+\subsection{Limitations}
+
+
+
+\phh
+
+
+
+\subsection{Future Work}
+
+
+
+\phh
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Conclusions}
+
+
+
+This paper presents a field-deployable smartwatch--smartphone electronic system for synchronised acquisition of multimodal wearable biomedical signals and real-time free-throw outcome labels in a sports-hall setting. A watch application on a Wear~OS device streams four continuous vendor SDK channels (accelerometer, heart rate, PPG, skin temperature); a protocol application on a paired Android smartphone records hit/miss labels for ten attempts per session. Cloud storage separates per-stream \texttt{raw/} JSONL biosignal batches from \texttt{protocol/} outcome logs while preserving shared identifiers and timestamps for temporal co-registration. \phh
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\authorcontributions{Conceptualization, A.G. and A.K.; methodology, A.G. and A.K.; software, A.G.; validation, A.G. and A.K.; formal analysis, A.G.; investigation, A.G.; resources, A.K.; data curation, A.G.; writing---original draft preparation, A.G.; writing---review and editing, A.G. and A.K.; visualization, A.G.; supervision, A.K.; project administration, A.K. All authors have read and agreed to the published version of the manuscript.}
+
+
+
+\funding{This research received no external funding.}
+
+
+
+\institutionalreview{The study protocol was approved in accordance with the Declaration of Helsinki by the Vilnius Gediminas Technical University Institutional Ethics Committee (protocol code 376-376-10, approved on 2 May 2024).}
+
+
+
+\informedconsent{Informed consent is obtained from all participants before enrolment.}
+
+
+
+\dataavailability{\phh}
+
+
+
+\acknowledgments{The authors acknowledge Vilnius Gediminas Technical University for institutional support. The authors thank Samsung for providing research equipment used in this study.}
+
+
+
+\conflictsofinterest{The authors declare no conflicts of interest.}
+
+
+
+\abbreviations{Abbreviations}{
+
+The following abbreviations are used in this manuscript:
+
+\\
+
+
+
+\noindent
+
+\begin{tabular}{@{}ll}
+
+API & application programming interface\\
+
+HR & heart rate\\
+
+IBI & inter-beat interval\\
+
+JSONL & JavaScript Object Notation Lines\\
+
+ML & machine learning\\
+
+PPG & photoplethysmography\\
+
+REST & Representational State Transfer\\
+
+ROC & receiver operating characteristic\\
+
+SDK & software development kit
+
+\end{tabular}
+
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{6pt}
+
+\begin{adjustwidth}{-\extralength}{0cm}
+
+\reftitle{References}
+
+
+
+\bibliography{references.bib}
+
+
+
+\PublishersNote{}
+
+\end{adjustwidth}
+
+
+
+\end{document}
+

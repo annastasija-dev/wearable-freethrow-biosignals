@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FT Protocol — install</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 28rem; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.1rem; margin-top: 1.5rem; }
+    a.btn {
+      display: block; text-align: center; background: #1565c0; color: #fff;
+      padding: 1rem; border-radius: 8px; text-decoration: none; font-size: 1.1rem; margin: 0.8rem 0;
+    }
+    .url { background: #f5f5f5; padding: 0.6rem; border-radius: 6px; margin: 0.4rem 0; word-break: break-all; }
+    .ok { color: #2e7d32; font-weight: 600; }
+    .warn { color: #c62828; }
+    ol { line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <h1>Free-throw study — install</h1>
+  <p id="status">Loading…</p>
+
+  <h2>Phone</h2>
+  <a class="btn" id="apk-btn" href="/download/ft-protocol.apk">Download FT Protocol</a>
+
+  <h2>Watch</h2>
+  <p>The FT Watch app is installed through the phone app FT Protocol.</p>
+  <ol>
+    <li>Open <strong>FT Protocol</strong>.</li>
+    <li>First time: <strong>⋮ → Install on watch</strong>.</li>
+    <li>Open <strong>FT Watch</strong> on the watch and leave it open.</li>
+    <li>Tap <strong>Test cloud connection</strong>, then start the session.</li>
+  </ol>
+  <p><a href="/instrukcija">Instrukcija (LT)</a> · <a href="/instructions">Instructions (EN)</a></p>
+  <script>
+    fetch("/api/v1/setup-info")
+      .then(r => r.json())
+      .then(info => {
+        const status = document.getElementById("status");
+        if (info.apk_ready) {
+          status.innerHTML = '<span class="ok">FT Protocol ready</span>';
+        } else {
+          status.innerHTML = '<span class="warn">APK not ready</span>';
+          document.getElementById("apk-btn").style.display = "none";
+        }
+      })
+      .catch(() => {
+        document.getElementById("status").innerHTML = '<span class="warn">Cloud unavailable</span>';
+      });
+  </script>
+</body>
+</html>

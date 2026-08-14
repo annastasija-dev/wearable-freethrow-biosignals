@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <string name="app_name">FT Watch</string>
+
+    <string name="status_ready">Ready</string>
+
+    <string name="status_recording">Recording</string>
+
+    <string name="mode_label">Mode: %1$s</string>
+
+    <string name="session_label">Session: %1$s</string>
+
+    <string name="waiting_phone">Ready — start on phone</string>
+
+    <string name="version_label">v%1$s</string>
+
+    <string name="samples_label">Sent: %1$d</string>
+
+    <string name="samples_dual_label">Local %1$d · sent %2$d</string>
+
+    <string name="relay_error">Link: %1$s</string>
+
+    <string name="sdk_error">SDK: %1$s</string>
+
+    <string name="phone_not_found">Phone not found — open FT Protocol on phone</string>
+
+    <string name="relay_pending">Data not yet sent to phone</string>
+
+    <string name="streams_sdk_failed">Samsung SDK error — check permissions</string>
+
+    <string name="streams_waiting">Streams: waiting…</string>
+
+    <string name="streams_active">%1$s</string>
+
+    <string name="tracker_label">Tracker: %1$s</string>
+
+    <string name="phone_control_hint">No watch buttons needed. Phone controls Start / Finish.</string>
+
+    <string name="permission_denied">Sensor permissions required</string>
+
+    <string name="session_started_toast">Session started from phone</string>
+
+    <string name="dev_mode_ok">Samsung SDK OK — all streams</string>
+
+    <string name="dev_mode_hint">Dev mode: Settings→Apps→Health Platform → tap version 10×</string>
+
+    <string name="session_stopped_toast">Session finished</string>
+
+</resources>
+
