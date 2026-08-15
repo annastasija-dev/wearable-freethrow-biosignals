@@ -22,6 +22,6 @@ Session
 Recorded signals
 Accelerometer (x, y, z), heart rate (bpm), and PPG (green, IR, red). If the watch is worn for longer and the participant is at rest, skin temperature is also recorded.
 
-After Finish session the record appears in the results folder.
+After Finish session, the files appear in the results folder.
 
 Questions: Anastasija Grubinskienė, anastasija.grubinskiene@vilniustech.lt

@@ -1,4 +1,4 @@
-Free-throw study — VGTU OneDrive files
+Free-throw study — VILNIUS TECH OneDrive files
 
 Folder:
   Documents / 2026 Shooting data Samsung / Baudu metimu duomenys /
@@ -8,13 +8,15 @@ In this folder
   README_EN.txt           — this description (English)
   Instrukcija_LT.txt      — how to collect data (Lithuanian)
   Instructions_EN.txt     — how to collect data (English)
-  phone/FT-Protocol.apk   — phone app
+  Overleaf_GitHub.txt     — Overleaf and GitHub links
+  phone/FT-Protocol.apk   — phone app (0.5.9)
+  watch/FT-Watch.apk      — watch app (0.5.2; usually installed via FT Protocol)
   results/                — finished sessions (uploaded by the server)
 
-The FT Watch app is installed through the phone app FT Protocol.
+FT Watch is usually installed from the phone: FT Protocol → ⋮ → Install on watch.
 
 Website
-  https://ft-cloud-vgtu.fly.dev/install
+  https://ft-cloud-vgtu.fly.dev/
 
 What is recorded
-Accelerometer, heart rate, and PPG. Temperature is not collected.
+Accelerometer, heart rate, and PPG. Skin temperature may be recorded if the watch is worn longer while the participant is at rest.

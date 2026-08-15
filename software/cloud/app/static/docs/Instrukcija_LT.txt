@@ -3,7 +3,7 @@ VILNIUS TECH · Elektroninių sistemų katedra
 
 Diegimas
 1. Telefone įdiekite FT-Protocol.apk.
-2. FT Watch įdiegiama telefono programoje: FT Protocol → ⋮ → Install on watch. Telefonas ir laikrodis turi būti tame pačiame Wi-Fi tinkle.
+2. FT Watch įdiegiama per telefono programą: FT Protocol → ⋮ → Install on watch. Telefonas ir laikrodis turi būti tame pačiame Wi-Fi tinkle.
 3. Laikrodyje atidarykite FT Watch ir palikite atidarytą.
 
 Jutikliai (vieną kartą laikrodyje)
@@ -22,6 +22,6 @@ Sesija
 Kokie signalai įrašomi
 Akselerometras (x, y, z), pulsas (bpm) ir PPG (žalia, IR, raudona). Jei laikrodis dėvimas ilgiau ir dalyvis yra ramioje būsenoje, įrašoma ir odos temperatūra.
 
-Po Finish session įrašas atsiranda results aplanke.
+Po Finish session failai atsiranda aplanke results.
 
 Klausimai: Anastasija Grubinskienė, anastasija.grubinskiene@vilniustech.lt

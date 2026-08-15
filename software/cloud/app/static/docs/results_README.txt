@@ -1,4 +1,4 @@
-Čia serveris po Finish session įrašo baigtas sesijas.
+Čia serveris po Finish session įkelia baigtas sesijas.
 
 Kiekviena sesija = atskiras aplankas, pvz. 2026-08-12_1430_P001
 
