@@ -3,6 +3,8 @@ package lt.vilniustech.basketball.cloud
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,6 +21,14 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.settingsToolbar)
         supportActionBar?.setDisplayShowTitleEnabled(true)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.settingsRoot) { view, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.ime(),
+            )
+            binding.settingsToolbar.setPadding(0, bars.top, 0, 0)
+            view.setPadding(0, 0, 0, bars.bottom)
+            insets
+        }
 
         binding.baseUrlInput.setText(AppConfig.cloudBaseUrl(this))
         binding.apiKeyInput.setText(AppConfig.apiKey(this))

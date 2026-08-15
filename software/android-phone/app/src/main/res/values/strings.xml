@@ -96,11 +96,11 @@
     <string name="install_watch_step_num_1">1</string>
     <string name="install_watch_step_num_2">2</string>
     <string name="install_watch_step_num_3">3</string>
-    <string name="install_watch_step_1">Connect the phone and the watch to the same Wi‑Fi. Galaxy Wearable must show Connected.</string>
+    <string name="install_watch_step_1">1. Connect the phone and the watch to the same Wi‑Fi. Galaxy Wearable must show Connected.</string>
     <string name="install_watch_heading_watch">On the watch</string>
-    <string name="install_watch_step_2">Settings → Developer options → Wireless debugging On. Then Pair new device and leave the 6-digit code on screen.</string>
+    <string name="install_watch_step_2">2. Settings → Developer options → Wireless debugging On. Then Pair new device and leave the 6-digit code on screen.</string>
     <string name="install_watch_heading_phone">On this phone</string>
-    <string name="install_watch_step_3">Enter the code below, tap Pair and install, then open FT Watch.</string>
+    <string name="install_watch_step_3">3. Enter the code above, tap Pair and install, then open FT Watch.</string>
     <string name="install_watch_step_then">If Developer options is missing: Settings → About watch → Software information → tap Software version seven times.</string>
     <string name="install_field_code">Pairing code</string>
     <string name="install_code_hint">000000</string>

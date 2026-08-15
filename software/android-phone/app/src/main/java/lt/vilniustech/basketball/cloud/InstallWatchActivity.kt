@@ -48,13 +48,15 @@ class InstallWatchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_install_watch)
-        setSupportActionBar(findViewById<MaterialToolbar>(R.id.installToolbar))
+        val toolbar = findViewById<MaterialToolbar>(R.id.installToolbar)
+        setSupportActionBar(toolbar)
 
         val root = findViewById<View>(R.id.installRoot)
         ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.ime(),
             )
+            toolbar.setPadding(0, bars.top, 0, 0)
             view.setPadding(0, 0, 0, bars.bottom)
             insets
         }
