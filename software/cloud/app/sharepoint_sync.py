@@ -144,12 +144,12 @@ def _upload_file_chunked(token: str, remote_path: str, local_path: Path) -> None
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
         },
-        json={"item": {"@microsoft.graph.conflictBehavior": "replace", "name": local_path.name}},
+        json={"item": {"@microsoft.graph.conflictBehavior": "replace", "name": Path(remote_path).name}},
         timeout=60.0,
     )
     if started.status_code not in (200, 201):
         raise RuntimeError(
-            f"Upload session failed {local_path.name}: {started.status_code} {started.text[:300]}"
+            f"Upload session failed {Path(remote_path).name}: {started.status_code} {started.text[:300]}"
         )
     upload_url = started.json()["uploadUrl"]
     size = local_path.stat().st_size
