@@ -2,8 +2,8 @@ Baudų metimų duomenų rinkimas
 VILNIUS TECH · Elektroninių sistemų katedra
 
 Diegimas
-1. Telefone įdiekite FT-Protocol.apk.
-2. FT Watch įdiegiama per telefono programą: FT Protocol → ⋮ → Install on watch. Telefonas ir laikrodis turi būti tame pačiame Wi-Fi tinkle.
+1. Telefone įdiekite phone/FT-Protocol-0.5.9.apk.
+2. FT Watch įdiegiama per telefono programą: FT Protocol → ⋮ → Install on watch (arba watch/FT-Watch-0.5.2.apk). Telefonas ir laikrodis turi būti tame pačiame Wi-Fi tinkle.
 3. Laikrodyje atidarykite FT Watch ir palikite atidarytą.
 
 Jutikliai (vieną kartą laikrodyje)

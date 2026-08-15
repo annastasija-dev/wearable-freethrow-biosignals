@@ -111,13 +111,18 @@ def _get_access_token() -> str:
     )
 
 
+_SIMPLE_UPLOAD_MAX = 4 * 1024 * 1024
+_UPLOAD_CHUNK = 320 * 1024 * 10  # Graph requires a multiple of 320 KiB
+
+
 def _upload_file(token: str, remote_path: str, local_path: Path) -> None:
     if not local_path.exists():
         return
-    # remote_path e.g. "2026 Shooting data WD/S.../protocol/session.json"
-    url = (
-        f"{GRAPH_BASE}/me/drive/root:/{remote_path}:/content"
-    )
+    size = local_path.stat().st_size
+    if size > _SIMPLE_UPLOAD_MAX:
+        _upload_file_chunked(token, remote_path, local_path)
+        return
+    url = f"{GRAPH_BASE}/me/drive/root:/{remote_path}:/content"
     content = local_path.read_bytes()
     response = httpx.put(
         url,
@@ -129,6 +134,44 @@ def _upload_file(token: str, remote_path: str, local_path: Path) -> None:
         raise RuntimeError(
             f"Upload failed {local_path.name}: {response.status_code} {response.text[:300]}"
         )
+
+
+def _upload_file_chunked(token: str, remote_path: str, local_path: Path) -> None:
+    session_url = f"{GRAPH_BASE}/me/drive/root:/{remote_path}:/createUploadSession"
+    started = httpx.post(
+        session_url,
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+        },
+        json={"item": {"@microsoft.graph.conflictBehavior": "replace", "name": local_path.name}},
+        timeout=60.0,
+    )
+    if started.status_code not in (200, 201):
+        raise RuntimeError(
+            f"Upload session failed {local_path.name}: {started.status_code} {started.text[:300]}"
+        )
+    upload_url = started.json()["uploadUrl"]
+    size = local_path.stat().st_size
+    start = 0
+    with local_path.open("rb") as handle:
+        while start < size:
+            data = handle.read(_UPLOAD_CHUNK)
+            end = start + len(data) - 1
+            put = httpx.put(
+                upload_url,
+                headers={
+                    "Content-Length": str(len(data)),
+                    "Content-Range": f"bytes {start}-{end}/{size}",
+                },
+                content=data,
+                timeout=180.0,
+            )
+            if put.status_code not in (200, 201, 202):
+                raise RuntimeError(
+                    f"Chunk upload failed {local_path.name}: {put.status_code} {put.text[:300]}"
+                )
+            start = end + 1
 
 
 def _delete_file(token: str, remote_path: str) -> bool:
@@ -258,12 +301,15 @@ def sync_instruction_pack() -> dict:
     """Upload protocol files to the OneDrive pack folder (not into results/)."""
     docs = Path(__file__).resolve().parent / "static" / "docs"
     root = instruction_pack_root()
+    downloads = Path(__file__).resolve().parent / "static" / "downloads"
     mapping = [
         (docs / "Instructions_EN.txt", f"{root}/Instructions_EN.txt"),
         (docs / "Instrukcija_LT.txt", f"{root}/Instrukcija_LT.txt"),
         (docs / "Overleaf_GitHub.txt", f"{root}/Overleaf_GitHub.txt"),
         (docs / "results_README.txt", f"{root}/results/README_LT.txt"),
         (docs / "results_README_EN.txt", f"{root}/results/README_EN.txt"),
+        (downloads / "ft-protocol.apk", f"{root}/phone/FT-Protocol-0.5.9.apk"),
+        (downloads / "ft-watch.apk", f"{root}/watch/FT-Watch-0.5.2.apk"),
     ]
     if not settings.sharepoint_enabled or not settings.graph_client_id:
         return {"status": "skipped", "reason": "sharepoint not configured"}
@@ -275,7 +321,14 @@ def sync_instruction_pack() -> dict:
         _upload_file(token, remote_path, local_path)
         uploaded.append(remote_path)
     deleted: list[str] = []
-    for extra in ("README.txt", "README_LT.txt", "README_EN.txt", "Straipsnis.txt"):
+    for extra in (
+        "README.txt",
+        "README_LT.txt",
+        "README_EN.txt",
+        "Straipsnis.txt",
+        "phone/FT-Protocol.apk",
+        "watch/FT-Watch.apk",
+    ):
         remote = f"{root}/{extra}"
         if _delete_file(token, remote):
             deleted.append(remote)

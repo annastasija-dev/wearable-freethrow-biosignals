@@ -203,7 +203,7 @@ def download_phone_apk() -> FileResponse:
     return FileResponse(
         apk_path,
         media_type="application/vnd.android.package-archive",
-        filename="FT-Protocol.apk",
+        filename="FT-Protocol-0.5.9.apk",
     )
 
 
@@ -216,7 +216,7 @@ def download_watch_apk() -> FileResponse:
     return FileResponse(
         apk_path,
         media_type="application/vnd.android.package-archive",
-        filename="FT-Watch.apk",
+        filename="FT-Watch-0.5.2.apk",
     )
 
 
