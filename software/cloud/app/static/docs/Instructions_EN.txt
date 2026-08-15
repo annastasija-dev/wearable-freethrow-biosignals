@@ -13,11 +13,14 @@ Before each session
 Open FT Watch. On the phone tap Test cloud connection (must be OK).
 
 Session
-1. Watch on the wrist.
+1. Watch on the throwing wrist, snug, not loose.
 2. Enter participant code, weight, height, age, sex, throwing technique.
 3. Start session.
-4. 10 free throws; after each shot tap Hit or Miss.
+4. 10 free throws. After each shot tap Hit or Miss.
 5. Finish session.
+
+How to throw
+Put the watch on before Start session. The participant should go slowly: prepare, throw, then Hit or Miss on the phone. Leave a short pause between shots (about ten seconds or more) so each throw is a clear event in the signals. Do not tap Hit/Miss in a row without a real throw.
 
 Recorded signals
 Accelerometer (x, y, z), heart rate (bpm), and PPG (green, IR, red). If the watch is worn for longer and the participant is at rest, skin temperature is also recorded.

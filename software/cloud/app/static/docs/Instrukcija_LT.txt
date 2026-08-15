@@ -13,11 +13,14 @@ Prieš kiekvieną sesiją
 Atidarykite FT Watch. Telefone spauskite Test cloud connection (turi būti OK).
 
 Sesija
-1. Laikrodis ant rankos.
+1. Laikrodis ant metančios rankos, prigludęs, ne per laisvas.
 2. Įrašykite dalyvio kodą, svorį, ūgį, amžių, lytį, metimo techniką.
 3. Start session.
-4. 10 baudų; po kiekvieno metimo Hit arba Miss.
+4. 10 baudų. Po kiekvieno metimo Hit arba Miss.
 5. Finish session.
+
+Kaip mesti
+Laikrodis uždėtas prieš Start session. Dalyvis viską daro ramiai ir neskubėdamas: pasiruošimas, metimas, Hit arba Miss telefone. Tarp metimų trumpa pauzė (keliolika sekundžių), kad kiekvienas metimas būtų aiškiai matomas signaluose. Nespauskite Hit/Miss iš eilės be tikro metimo.
 
 Kokie signalai įrašomi
 Akselerometras (x, y, z), pulsas (bpm) ir PPG (žalia, IR, raudona). Jei laikrodis dėvimas ilgiau ir dalyvis yra ramioje būsenoje, įrašoma ir odos temperatūra.
