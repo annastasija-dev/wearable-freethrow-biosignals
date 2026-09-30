@@ -53,6 +53,7 @@ class CloudApiClient(
             .put("height_cm", profile.heightCm)
             .put("age_years", profile.ageYears)
             .put("sex", profile.sex)
+            .put("skill_level", profile.skillLevel)
             .put("throw_technique", profile.throwTechnique)
         val json = post("/api/v1/sessions/start", body)
         return SessionStartResponse(

@@ -7,11 +7,14 @@ from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+import io
+import zipfile
 
 from .config import settings
 from .discovery import mdns_hostname, start_mdns, stop_mdns
+from .pain_diary import router as pain_diary_router
 from .models import (
     RawCapabilitiesRequest,
     RawImuBatchRequest,
@@ -49,9 +52,15 @@ from .storage import (
 try:
     from .sharepoint_sync import sync_session as sharepoint_sync_session
     from .sharepoint_sync import sync_instruction_pack as sharepoint_sync_docs
+    from .sharepoint_sync import sync_pain_pack as sharepoint_sync_pain_docs
+    from .sharepoint_sync import sync_pain_participant as sharepoint_sync_pain_participant
+    from .sharepoint_sync import sync_all_finished as sharepoint_sync_all_finished
 except ImportError:
     sharepoint_sync_session = None
     sharepoint_sync_docs = None
+    sharepoint_sync_pain_docs = None
+    sharepoint_sync_pain_participant = None
+    sharepoint_sync_all_finished = None
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
@@ -101,11 +110,12 @@ def _finish_stale_recording_sessions(max_age_minutes: int = 45) -> int:
 
 
 app = FastAPI(
-    title="Basketball Free-Throw Cloud",
-    version="0.2.0",
-    description="Two-folder cloud storage: raw watch IMU and phone protocol labels.",
+    title="VGTU study cloud",
+    version="0.3.0",
+    description="Shared server: free-throw sessions and Pain Diary study.",
     lifespan=lifespan,
 )
+app.include_router(pain_diary_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -203,7 +213,7 @@ def download_phone_apk() -> FileResponse:
     return FileResponse(
         apk_path,
         media_type="application/vnd.android.package-archive",
-        filename="FT-Protocol-0.5.9.apk",
+        filename="FT-Protocol-0.5.10.apk",
     )
 
 
@@ -217,6 +227,30 @@ def download_watch_apk() -> FileResponse:
         apk_path,
         media_type="application/vnd.android.package-archive",
         filename="FT-Watch-0.5.2.apk",
+    )
+
+
+@app.get("/download/pain-diary.apk")
+def download_pain_phone_apk() -> FileResponse:
+    apk_path = static_dir / "downloads" / "pain-diary.apk"
+    if not apk_path.exists():
+        raise HTTPException(status_code=404, detail="Pain Diary APK not built yet")
+    return FileResponse(
+        apk_path,
+        media_type="application/vnd.android.package-archive",
+        filename="PainDiary-0.6.0.apk",
+    )
+
+
+@app.get("/download/pain-watch.apk")
+def download_pain_watch_apk() -> FileResponse:
+    apk_path = static_dir / "downloads" / "pain-watch.apk"
+    if not apk_path.exists():
+        raise HTTPException(status_code=404, detail="Pain Diary watch APK not built yet")
+    return FileResponse(
+        apk_path,
+        media_type="application/vnd.android.package-archive",
+        filename="PainDiary-Watch-0.4.0.apk",
     )
 
 
@@ -242,6 +276,16 @@ def sync_docs() -> dict:
         raise HTTPException(status_code=503, detail="SharePoint sync not available")
     try:
         return sharepoint_sync_docs()
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/api/v1/pain/sync-docs", dependencies=[Depends(verify_api_key)])
+def sync_pain_docs() -> dict:
+    if sharepoint_sync_pain_docs is None:
+        raise HTTPException(status_code=503, detail="SharePoint sync not available")
+    try:
+        return sharepoint_sync_pain_docs()
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -306,6 +350,51 @@ def _list_recording_sessions(max_age_minutes: int = 10) -> list[dict]:
     return sessions
 
 
+@app.get("/api/v1/sessions", dependencies=[Depends(verify_api_key)])
+def list_sessions() -> dict:
+    """List all protocol sessions on Fly disk (for recovery / OneDrive re-sync)."""
+    items: list[dict] = []
+    if not settings.protocol_root.exists():
+        return {"count": 0, "sessions": []}
+    for path in settings.protocol_root.iterdir():
+        if not path.is_dir():
+            continue
+        session_file = path / "session.json"
+        if not session_file.exists():
+            continue
+        session = read_json(session_file)
+        sid = session.get("session_id") or path.name
+        raw_count, raw_streams = count_raw_samples(sid)
+        items.append(
+            {
+                "session_id": sid,
+                "folder_name": session.get("folder_name") or folder_name_for_session(sid),
+                "participant_code": session.get("participant_code"),
+                "status": session.get("status"),
+                "started_at": session.get("started_at"),
+                "ended_at": session.get("ended_at"),
+                "shots_recorded": count_jsonl_lines(protocol_shots_path(sid)),
+                "raw_samples": raw_count,
+                "raw_streams": raw_streams,
+            }
+        )
+    items.sort(key=lambda item: item.get("started_at") or "", reverse=True)
+    return {"count": len(items), "sessions": items}
+
+
+@app.post("/api/v1/sessions/sync-all", dependencies=[Depends(verify_api_key)])
+def sync_all_sessions_to_onedrive() -> dict:
+    """Re-upload every finished session from Fly disk to OneDrive results/."""
+    if sharepoint_sync_all_finished is None:
+        raise HTTPException(status_code=503, detail="SharePoint sync not available")
+    try:
+        results = sharepoint_sync_all_finished()
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    ok = sum(1 for r in results if r.get("status") == "ok")
+    return {"count": len(results), "ok": ok, "results": results}
+
+
 @app.get("/api/v1/sessions/active", dependencies=[Depends(verify_api_key)])
 def active_sessions() -> dict:
     """Latest recording session — watch polls this when phone Wi-Fi relay fails."""
@@ -339,6 +428,7 @@ def start_session(body: SessionStartRequest) -> SessionStartResponse:
         "height_cm": body.height_cm,
         "age_years": body.age_years,
         "sex": body.sex,
+        "skill_level": body.skill_level,
         "throw_technique": body.throw_technique,
         "started_at": started_at.isoformat(),
         "ended_at": None,
@@ -362,6 +452,7 @@ def start_session(body: SessionStartRequest) -> SessionStartResponse:
             "height_cm": body.height_cm,
             "age_years": body.age_years,
             "sex": body.sex,
+            "skill_level": body.skill_level,
             "throw_technique": body.throw_technique,
             "source": "samsung_watch_via_phone",
             "format": "jsonl",
@@ -553,6 +644,30 @@ def sync_session_sharepoint(session_id: str) -> dict:
         return sharepoint_sync_session(session_id)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.get("/api/v1/sessions/{session_id}/download", dependencies=[Depends(verify_api_key)])
+def download_session_zip(session_id: str) -> StreamingResponse:
+    """Download protocol + raw files as a zip (recovery when OneDrive sync fails)."""
+    if not protocol_session_path(session_id).exists():
+        raise HTTPException(status_code=404, detail="Session not found")
+    folder = folder_name_for_session(session_id)
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        for path in session_protocol_dir(session_id).iterdir():
+            if path.is_file():
+                zf.write(path, f"{folder}/protocol/{path.name}")
+        raw_dir = session_raw_dir(session_id)
+        if raw_dir.exists():
+            for path in raw_dir.iterdir():
+                if path.is_file():
+                    zf.write(path, f"{folder}/raw/{path.name}")
+    buf.seek(0)
+    return StreamingResponse(
+        buf,
+        media_type="application/zip",
+        headers={"Content-Disposition": f'attachment; filename="{folder}.zip"'},
+    )
 
 
 @app.get("/api/v1/sessions/{session_id}", response_model=SessionSummary, dependencies=[Depends(verify_api_key)])

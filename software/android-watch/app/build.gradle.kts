@@ -14,8 +14,8 @@ android {
         applicationId = "lt.vilniustech.basketball.watch"
         minSdk = 30
         targetSdk = 35
-        versionCode = 52
-        versionName = "0.5.1"
+        versionCode = 53
+        versionName = "0.5.2"
         buildConfigField("Boolean", "HAS_SAMSUNG_SDK", samsungAar.exists().toString())
     }
 

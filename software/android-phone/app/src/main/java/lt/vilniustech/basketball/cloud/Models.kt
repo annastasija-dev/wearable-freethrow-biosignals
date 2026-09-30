@@ -13,6 +13,7 @@ data class ParticipantProfile(
     val heightCm: Int,
     val ageYears: Int,
     val sex: String,
+    val skillLevel: String,
     val throwTechnique: String,
 )
 

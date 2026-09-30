@@ -2,7 +2,7 @@ Free-throw data collection
 VILNIUS TECH · Department of Electronic Systems
 
 Install
-1. Install phone/FT-Protocol-0.5.9.apk on the phone.
+1. Install phone/FT-Protocol-0.5.10.apk on the phone.
 2. FT Watch is installed from the phone app: FT Protocol → ⋮ → Install on watch (or watch/FT-Watch-0.5.2.apk). The phone and the watch must be on the same Wi-Fi network.
 3. Open FT Watch on the watch and leave it open.
 
@@ -14,7 +14,7 @@ Open FT Watch. On the phone tap Test cloud connection (must be OK).
 
 Session
 1. Watch on the throwing wrist, snug, not loose.
-2. Enter participant code, weight, height, age, sex, throwing technique.
+2. Enter participant code, weight, height, age, sex, skill level (Beginner / Intermediate / Professional), throwing technique.
 3. Start session.
 4. 10 free throws. After each shot tap Hit or Miss.
 5. Finish session.

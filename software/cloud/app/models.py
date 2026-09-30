@@ -23,6 +23,7 @@ class SessionStartRequest(BaseModel):
     height_cm: int | None = Field(default=None, ge=100, le=250)
     age_years: int | None = Field(default=None, ge=10, le=100)
     sex: str | None = Field(default=None, max_length=64)
+    skill_level: str | None = Field(default=None, max_length=64)
     throw_technique: str | None = Field(default=None, max_length=64)
 
 

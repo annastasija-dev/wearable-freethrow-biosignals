@@ -9,7 +9,7 @@ Aplankas:
   Instrukcija_LT.txt      — kaip rinkti duomenis (lietuviškai)
   Instructions_EN.txt     — tas pats angliškai
   Overleaf_GitHub.txt     — Overleaf ir GitHub nuorodos
-  phone/FT-Protocol.apk   — telefono programa (0.5.9)
+  phone/FT-Protocol.apk   — telefono programa (0.5.10)
   watch/FT-Watch.apk      — laikrodžio programa (0.5.2; paprastai diegiama per FT Protocol)
   results/                — baigtos sesijos (įkelia serveris)
 

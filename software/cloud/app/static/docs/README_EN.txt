@@ -9,7 +9,7 @@ In this folder
   Instrukcija_LT.txt      — how to collect data (Lithuanian)
   Instructions_EN.txt     — how to collect data (English)
   Overleaf_GitHub.txt     — Overleaf and GitHub links
-  phone/FT-Protocol.apk   — phone app (0.5.9)
+  phone/FT-Protocol.apk   — phone app (0.5.10)
   watch/FT-Watch.apk      — watch app (0.5.2; usually installed via FT Protocol)
   results/                — finished sessions (uploaded by the server)
 

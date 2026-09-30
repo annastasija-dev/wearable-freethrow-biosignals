@@ -2,7 +2,7 @@ Baudų metimų duomenų rinkimas
 VILNIUS TECH · Elektroninių sistemų katedra
 
 Diegimas
-1. Telefone įdiekite phone/FT-Protocol-0.5.9.apk.
+1. Telefone įdiekite phone/FT-Protocol-0.5.10.apk.
 2. FT Watch įdiegiama per telefono programą: FT Protocol → ⋮ → Install on watch (arba watch/FT-Watch-0.5.2.apk). Telefonas ir laikrodis turi būti tame pačiame Wi-Fi tinkle.
 3. Laikrodyje atidarykite FT Watch ir palikite atidarytą.
 
@@ -14,7 +14,7 @@ Atidarykite FT Watch. Telefone spauskite Test cloud connection (turi būti OK).
 
 Sesija
 1. Laikrodis ant metančios rankos, prigludęs, ne per laisvas.
-2. Įrašykite dalyvio kodą, svorį, ūgį, amžių, lytį, metimo techniką.
+2. Įrašykite dalyvio kodą, svorį, ūgį, amžių, lytį, įgūdžio lygį (Beginner / Intermediate / Professional), metimo techniką.
 3. Start session.
 4. 10 baudų. Po kiekvieno metimo Hit arba Miss.
 5. Finish session.

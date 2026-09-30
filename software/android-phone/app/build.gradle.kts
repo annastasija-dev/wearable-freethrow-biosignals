@@ -15,8 +15,8 @@ android {
         applicationId = "lt.vilniustech.basketball.cloud"
         minSdk = 28
         targetSdk = 35
-        versionCode = 66
-        versionName = "0.5.9"
+        versionCode = 67
+        versionName = "0.5.10"
         buildConfigField("String", "CLOUD_BASE_URL", "\"https://ft-cloud-vgtu.fly.dev\"")
         buildConfigField("String", "TAILSCALE_URL", "\"https://ft-cloud-vgtu.fly.dev\"")
         buildConfigField("String", "CLOUD_API_KEY", "\"dev-change-me\"")

@@ -21,6 +21,7 @@ class LocalSessionStore(context: Context) {
                 .put("height_cm", profile.heightCm)
                 .put("age_years", profile.ageYears)
                 .put("sex", profile.sex)
+                .put("skill_level", profile.skillLevel)
                 .put("throw_technique", profile.throwTechnique)
         }
         writeText(File(dir, "session.json"), json.toString())

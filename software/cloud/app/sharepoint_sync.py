@@ -308,7 +308,7 @@ def sync_instruction_pack() -> dict:
         (docs / "Overleaf_GitHub.txt", f"{root}/Overleaf_GitHub.txt"),
         (docs / "results_README.txt", f"{root}/results/README_LT.txt"),
         (docs / "results_README_EN.txt", f"{root}/results/README_EN.txt"),
-        (downloads / "ft-protocol.apk", f"{root}/phone/FT-Protocol-0.5.9.apk"),
+        (downloads / "ft-protocol.apk", f"{root}/phone/FT-Protocol-0.5.10.apk"),
         (downloads / "ft-watch.apk", f"{root}/watch/FT-Watch-0.5.2.apk"),
     ]
     if not settings.sharepoint_enabled or not settings.graph_client_id:
@@ -327,6 +327,7 @@ def sync_instruction_pack() -> dict:
         "README_EN.txt",
         "Straipsnis.txt",
         "phone/FT-Protocol.apk",
+        "phone/FT-Protocol-0.5.9.apk",
         "watch/FT-Watch.apk",
     ):
         remote = f"{root}/{extra}"
@@ -343,5 +344,94 @@ def sync_instruction_pack() -> dict:
         "sharepoint_url": (
             "https://vgtuitsc-my.sharepoint.com/personal/"
             "anastasija_grubinskiene_vilniustech_lt/Documents/" + root
+        ),
+    }
+
+
+def pain_pack_root() -> str:
+    return settings.sharepoint_pain_folder.strip("/\\")
+
+
+def sync_pain_pack() -> dict:
+    """Create OneDrive folder Skausmo dienorasciu duomenys and upload pack files."""
+    docs = Path(__file__).resolve().parent / "static" / "pain-docs"
+    downloads = Path(__file__).resolve().parent / "static" / "downloads"
+    root = pain_pack_root()
+    mapping = [
+        (docs / "Instrukcija_LT.txt", f"{root}/Instrukcija_LT.txt"),
+        (docs / "Instructions_EN.txt", f"{root}/Instructions_EN.txt"),
+        (docs / "results_README_LT.txt", f"{root}/results/README_LT.txt"),
+        (docs / "results_README_EN.txt", f"{root}/results/README_EN.txt"),
+        (docs / "Straipsnis_logika_LT.txt", f"{root}/paper/Straipsnis_logika_LT.txt"),
+        (docs / "Article_outline_EN.txt", f"{root}/paper/Article_outline_EN.txt"),
+        (docs / "README_etika.txt", f"{root}/etika/README_etika.txt"),
+        (docs / "Informacija_dalyviui_LT.txt", f"{root}/etika/Informacija_dalyviui_LT.txt"),
+        (docs / "Sutikimas_LT.txt", f"{root}/etika/Sutikimas_LT.txt"),
+        (docs / "Etikos_paraiska_LT.txt", f"{root}/etika/Etikos_paraiska_LT.txt"),
+        (docs / "Tyrimo_protokolas_etikai_LT.txt", f"{root}/etika/Tyrimo_protokolas_etikai_LT.txt"),
+        (docs / "Participant_information_EN.txt", f"{root}/etika/Participant_information_EN.txt"),
+        (docs / "Consent_EN.txt", f"{root}/etika/Consent_EN.txt"),
+        (downloads / "pain-diary.apk", f"{root}/phone/PainDiary-0.9.0.apk"),
+        (downloads / "pain-watch.apk", f"{root}/watch/PainDiary-Watch-0.4.0.apk"),
+    ]
+    if not settings.sharepoint_enabled or not settings.graph_client_id:
+        return {"status": "skipped", "reason": "sharepoint not configured", "folder": root}
+    token = _get_access_token()
+    uploaded: list[str] = []
+    for local_path, remote_path in mapping:
+        if not local_path.exists():
+            continue
+        _upload_file(token, remote_path, local_path)
+        uploaded.append(remote_path)
+    return {
+        "status": "ok",
+        "folder": root,
+        "uploaded": uploaded,
+        "sharepoint_url": (
+            "https://vgtuitsc-my.sharepoint.com/personal/"
+            "anastasija_grubinskiene_vilniustech_lt/Documents/" + root
+        ),
+    }
+
+
+def sync_pain_participant(code: str) -> dict:
+    """Upload one Pain Diary participant to OneDrive results/{CODE}/."""
+    root = pain_pack_root()
+    participant = code.strip().upper()
+    local_root = settings.data_root / "pain" / participant
+    if not local_root.exists():
+        return {"status": "skipped", "reason": "no local pain data", "code": participant}
+    if not settings.sharepoint_enabled or not settings.graph_client_id:
+        return {"status": "skipped", "reason": "sharepoint not configured"}
+    token = _get_access_token()
+    remote_base = f"{root}/results/{participant}"
+    uploaded: list[str] = []
+    profile = local_root / "profile.json"
+    protocol = local_root / "protocol.json"
+    events = local_root / "events.jsonl"
+    if profile.exists():
+        _upload_file(token, f"{remote_base}/profile.json", profile)
+        uploaded.append(f"{remote_base}/profile.json")
+    if protocol.exists():
+        _upload_file(token, f"{remote_base}/protocol.json", protocol)
+        uploaded.append(f"{remote_base}/protocol.json")
+    if events.exists():
+        _upload_file(token, f"{remote_base}/events.jsonl", events)
+        uploaded.append(f"{remote_base}/events.jsonl")
+    raw_root = local_root / "raw"
+    if raw_root.exists():
+        for path in raw_root.rglob("*.jsonl"):
+            rel = path.relative_to(raw_root).as_posix()
+            remote = f"{remote_base}/raw/{rel}"
+            _upload_file(token, remote, path)
+            uploaded.append(remote)
+    return {
+        "status": "ok",
+        "code": participant,
+        "uploaded": uploaded,
+        "sharepoint_url": (
+            "https://vgtuitsc-my.sharepoint.com/personal/"
+            "anastasija_grubinskiene_vilniustech_lt/Documents/"
+            f"{remote_base}"
         ),
     }

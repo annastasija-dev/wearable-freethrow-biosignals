@@ -255,6 +255,20 @@ class MainActivity : AppCompatActivity() {
         binding.throwTechniqueInput.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) binding.throwTechniqueInput.showDropDown()
         }
+
+        val skillAdapter = ArrayAdapter(
+            this,
+            R.layout.item_dropdown,
+            resources.getStringArray(R.array.skill_level_options),
+        )
+        binding.skillLevelInput.threshold = 0
+        binding.skillLevelInput.setAdapter(skillAdapter)
+        binding.skillLevelInput.setDropDownBackgroundResource(R.drawable.popup_dropdown_bg)
+        binding.skillLevelInput.dropDownVerticalOffset = 8
+        binding.skillLevelInput.setOnClickListener { binding.skillLevelInput.showDropDown() }
+        binding.skillLevelInput.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) binding.skillLevelInput.showDropDown()
+        }
     }
 
     private fun startSession() {
@@ -264,6 +278,7 @@ class MainActivity : AppCompatActivity() {
         val heightCm = binding.heightInput.text.toString().trim().toIntOrNull()
         val ageYears = binding.ageInput.text.toString().trim().toIntOrNull()
         val sex = binding.sexInput.text.toString().trim()
+        val skillLevel = binding.skillLevelInput.text.toString().trim()
         val throwTechnique = binding.throwTechniqueInput.text.toString().trim()
 
         if (participant.isEmpty()) {
@@ -286,6 +301,10 @@ class MainActivity : AppCompatActivity() {
             toast(getString(R.string.error_sex))
             return
         }
+        if (skillLevel.isEmpty()) {
+            toast(getString(R.string.error_skill_level))
+            return
+        }
         if (throwTechnique.isEmpty()) {
             toast(getString(R.string.error_throw_technique))
             return
@@ -296,6 +315,7 @@ class MainActivity : AppCompatActivity() {
             heightCm = heightCm,
             ageYears = ageYears,
             sex = sex,
+            skillLevel = skillLevel,
             throwTechnique = throwTechnique,
         )
 
@@ -847,6 +867,7 @@ class MainActivity : AppCompatActivity() {
         binding.heightInput.isEnabled = enabled
         binding.ageInput.isEnabled = enabled
         binding.sexInput.isEnabled = enabled
+        binding.skillLevelInput.isEnabled = enabled
         binding.throwTechniqueInput.isEnabled = enabled
     }
 

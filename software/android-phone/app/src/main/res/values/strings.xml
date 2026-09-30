@@ -11,6 +11,7 @@
     <string name="error_age">Enter age (years)</string>
     <string name="error_sex">Select sex</string>
     <string name="error_throw_technique">Select throwing technique</string>
+    <string name="error_skill_level">Select skill level</string>
     <string name="start_first">Start a session first</string>
     <string name="all_shots_done">All 10 shots are labeled</string>
     <string name="session_started">Recording: %1$s</string>
@@ -55,11 +56,17 @@
     <string name="height_hint">Height (cm)</string>
     <string name="age_hint">Age (years)</string>
     <string name="sex_hint">Sex</string>
+    <string name="skill_level_hint">Skill level</string>
     <string name="throw_technique_hint">Throwing technique</string>
     <string-array name="sex_options">
         <item>Female</item>
         <item>Male</item>
         <item>Other / prefer not to say</item>
+    </string-array>
+    <string-array name="skill_level_options">
+        <item>Beginner</item>
+        <item>Intermediate</item>
+        <item>Professional</item>
     </string-array>
     <string-array name="throw_technique_options">
         <item>One hand</item>
@@ -87,7 +94,7 @@
     <string name="close">Close</string>
     <string name="flow_help_title">Session steps</string>
     <string name="flow_step_1">1. First time: ⋮ → Install on watch. Then open FT Watch.</string>
-    <string name="flow_step_2">2. Enter participant code, weight, height, age, sex, and throwing technique.</string>
+    <string name="flow_step_2">2. Enter participant code, weight, height, age, sex, skill level, and throwing technique.</string>
     <string name="flow_step_3">3. Tap Test cloud connection, then Start session.</string>
     <string name="flow_step_4">4. After each free throw, tap Hit or Miss.</string>
     <string name="flow_step_5">5. After 10 shots, tap Finish session.</string>
