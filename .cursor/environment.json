@@ -1,0 +1,16 @@
+{
+  "name": "FT Cloud (FastAPI backend)",
+  "install": "sudo apt-get update && sudo apt-get install -y python3.12-venv && cd software/cloud && python3 -m venv .venv && .venv/bin/python -m pip install --upgrade pip && .venv/bin/pip install -r requirements.txt",
+  "terminals": [
+    {
+      "name": "ft-cloud-api",
+      "command": "cd software/cloud && API_KEY=dev-change-me .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8080"
+    }
+  ],
+  "ports": [
+    {
+      "name": "FT Cloud API",
+      "port": 8080
+    }
+  ]
+}
